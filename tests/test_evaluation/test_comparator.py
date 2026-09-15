@@ -1,8 +1,8 @@
 """Tests for the trace-vs-gold comparator."""
 
-from edgetoolbench.evaluation.comparator import evaluate
-from edgetoolbench.evaluation.gold_standard import GoldStandard, GoldToolCall
-from edgetoolbench.harness.trace import ExecutionTrace, ToolCall, ToolResponse
+from mcp_granite.evaluation.comparator import evaluate
+from mcp_granite.evaluation.gold_standard import GoldStandard, GoldToolCall
+from mcp_granite.harness.trace import ExecutionTrace, ToolCall, ToolResponse
 
 
 def _make_trace(

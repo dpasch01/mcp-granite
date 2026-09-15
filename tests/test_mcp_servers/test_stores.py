@@ -1,11 +1,11 @@
 """Tests for mock data stores."""
 
-from edgetoolbench.mcp_servers.travel._store import TravelStore
-from edgetoolbench.mcp_servers.helpdesk._store import HelpdeskStore
-from edgetoolbench.mcp_servers.ecommerce._store import ECommerceStore
-from edgetoolbench.mcp_servers.smarthome._store import SmartHomeStore
-from edgetoolbench.mcp_servers.industrial._store import IndustrialStore
-from edgetoolbench.mcp_servers.fleet._store import FleetStore
+from mcp_granite.mcp_servers.travel._store import TravelStore
+from mcp_granite.mcp_servers.helpdesk._store import HelpdeskStore
+from mcp_granite.mcp_servers.ecommerce._store import ECommerceStore
+from mcp_granite.mcp_servers.smarthome._store import SmartHomeStore
+from mcp_granite.mcp_servers.industrial._store import IndustrialStore
+from mcp_granite.mcp_servers.fleet._store import FleetStore
 
 
 # ── Travel Store ─────────────────────────────────────────────────────────────

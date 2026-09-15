@@ -7,14 +7,14 @@ import pytest
 import yaml
 from click.testing import CliRunner
 
-from edgetoolbench.cli import main
-from edgetoolbench.config.settings import ExperimentConfig
-from edgetoolbench.evaluation.comparator import evaluate
-from edgetoolbench.evaluation.gold_standard import load_gold_standard
-from edgetoolbench.harness.trace import ExecutionTrace, ToolCall, ToolResponse
-from edgetoolbench.orchestrator.experiment import generate_experiment_matrix
-from edgetoolbench.orchestrator.results import load_results
-from edgetoolbench.scenarios.loader import load_scenario_by_id
+from mcp_granite.cli import main
+from mcp_granite.config.settings import ExperimentConfig
+from mcp_granite.evaluation.comparator import evaluate
+from mcp_granite.evaluation.gold_standard import load_gold_standard
+from mcp_granite.harness.trace import ExecutionTrace, ToolCall, ToolResponse
+from mcp_granite.orchestrator.experiment import generate_experiment_matrix
+from mcp_granite.orchestrator.results import load_results
+from mcp_granite.scenarios.loader import load_scenario_by_id
 
 ROOT = Path(__file__).resolve().parents[1]
 SAMPLE = ROOT / "examples/sample_run"

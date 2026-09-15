@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""EdgeToolBench analysis script — joins results.jsonl with prometheus.csv,
+"""MCP-GRANITE analysis script — joins results.jsonl with prometheus.csv,
 produces research-paper-quality figures and summary tables.
 
 Usage:
@@ -32,12 +32,12 @@ from scipy import stats
 # ---------------------------------------------------------------------------
 sys.path.insert(0, str(Path(__file__).resolve().parent / "src"))
 
-from edgetoolbench.models.registry import (
+from mcp_granite.models.registry import (
     MODELS,
     _fetch_ollama_model_details,
     resolve_parameter_count,
 )
-from edgetoolbench.monitoring.prometheus import DEFAULT_METRIC_SUFFIXES
+from mcp_granite.monitoring.prometheus import DEFAULT_METRIC_SUFFIXES
 
 # ---------------------------------------------------------------------------
 # Global config
@@ -1076,7 +1076,7 @@ def section_08_domain(
 
 def main() -> None:
     parser = argparse.ArgumentParser(
-        description="EdgeToolBench analysis — produces research figures and tables.",
+        description="MCP-GRANITE analysis — produces research figures and tables.",
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog=__doc__,
     )
@@ -1148,7 +1148,7 @@ def main() -> None:
 
     # Run sections
     print("\n" + "=" * 80)
-    print("  EdgeToolBench Analysis")
+    print("  MCP-GRANITE Analysis")
     print("=" * 80)
 
     # Section 1: always runs

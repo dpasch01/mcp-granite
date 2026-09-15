@@ -43,10 +43,10 @@ From the repository root:
 
 ```bash
 # Summarize the recorded execution without a model or API key.
-uv run edgetoolbench evaluate --results-dir examples/sample_run
+uv run mcp-granite evaluate --results-dir examples/sample_run
 
 # With Ollama running and granite4:3b pulled, execute the scenario again.
-uv run edgetoolbench run --config configs/default.yaml
+uv run mcp-granite run --config configs/default.yaml
 ```
 
 A fresh execution writes to `results/run_YYYYMMDD_HHMMSS/`. Model versions,

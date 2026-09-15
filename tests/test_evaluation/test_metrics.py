@@ -1,6 +1,6 @@
 """Tests for evaluation metrics."""
 
-from edgetoolbench.evaluation.metrics import (
+from mcp_granite.evaluation.metrics import (
     compute_argument_accuracy,
     compute_redundant_call_rate,
     compute_sequence_edit_distance,

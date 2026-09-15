@@ -5,7 +5,7 @@ from pathlib import Path
 import pytest
 import yaml
 
-from edgetoolbench.scenarios.loader import load_scenario_by_id, load_scenarios
+from mcp_granite.scenarios.loader import load_scenario_by_id, load_scenarios
 
 SAMPLE_ROOT = Path(__file__).resolve().parents[2] / "scenarios"
 

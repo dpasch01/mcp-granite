@@ -4,7 +4,7 @@ import asyncio
 
 import pytest
 
-from edgetoolbench.mcp_servers._base import (
+from mcp_granite.mcp_servers._base import (
     FaultConfig,
     FaultInjector,
     FaultType,

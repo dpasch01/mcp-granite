@@ -6,8 +6,7 @@ granularity affects LLM-agent performance, robustness, latency, and resource usa
 This repository contains the runnable system and **one sample scenario with four
 recorded executions**. The full scenario dataset and experiment outputs are
 will be published in a separate repository; its link will be added when available.
-The Python package and CLI retain their original name,
-`edgetoolbench`.
+The CLI command is `mcp-granite`; the Python package is `mcp_granite`.
 
 ## System
 
@@ -40,8 +39,8 @@ Run the following commands from the repository root after cloning:
 git clone https://github.com/dpasch01/mcp-granite.git
 cd mcp-granite
 uv sync --locked --extra dev --extra analysis
-uv run edgetoolbench --help
-uv run edgetoolbench list-scenarios
+uv run mcp-granite --help
+uv run mcp-granite list-scenarios
 ```
 
 The committed `uv.lock` records dependency versions for this release.
@@ -49,7 +48,7 @@ The committed `uv.lock` records dependency versions for this release.
 ## Inspect the sample execution (no model required)
 
 ```bash
-uv run edgetoolbench evaluate --results-dir examples/sample_run
+uv run mcp-granite evaluate --results-dir examples/sample_run
 ```
 
 The included records come from one historical execution of `granite4:3b` on
@@ -64,7 +63,7 @@ Install and start Ollama, then pull the model:
 
 ```bash
 ollama pull granite4:3b
-uv run edgetoolbench run --config configs/default.yaml
+uv run mcp-granite run --config configs/default.yaml
 ```
 
 Ollama must be reachable at `http://localhost:11434`. If it is not already
@@ -76,7 +75,7 @@ the recorded sample.
 The command prints its output directory. Use that path to inspect the new run:
 
 ```bash
-uv run edgetoolbench evaluate --results-dir results/run_YYYYMMDD_HHMMSS
+uv run mcp-granite evaluate --results-dir results/run_YYYYMMDD_HHMMSS
 ```
 
 Each run contains `results.jsonl` (condition settings, scores, and timing), a
@@ -86,7 +85,8 @@ Each run contains `results.jsonl` (condition settings, scores, and timing), a
 To use another installed local model, pass its Ollama tag with `-m`. API-backed
 models can also be selected using the registry or a LiteLLM provider/model ID;
 export the appropriate provider credentials in your shell. See `.env.example`
-for optional configuration and `uv run edgetoolbench list-models` for registry
+for optional configuration (`MCP_GRANITE_` environment-variable prefix) and
+`uv run mcp-granite list-models` for registry
 entries. Provider availability depends on your account and installed backend.
 
 ## Use the separate dataset
@@ -109,7 +109,7 @@ The default path in that config assumes a sibling checkout named
 All relative paths are resolved from the working directory.
 
 ```bash
-uv run edgetoolbench run --config configs/benchmark.yaml
+uv run mcp-granite run --config configs/benchmark.yaml
 ```
 
 Edit the model list, domains, repetitions, and fault rates for your experiment.
@@ -147,7 +147,7 @@ uv sync --locked --extra dev --extra analysis --extra monitoring
 
 Then set `prometheus_url` in the experiment YAML to your Prometheus endpoint.
 Monitoring is optional and requires an existing exporter setup.
-`uv run edgetoolbench fetch-metrics --help` describes post-run collection.
+`uv run mcp-granite fetch-metrics --help` describes post-run collection.
 
 ## Development
 
@@ -162,7 +162,7 @@ require the full dataset, an LLM service, or provider credentials.
 ## Repository layout
 
 ```text
-src/edgetoolbench/    Runtime, MCP servers, agent harness, evaluator, monitoring
+src/mcp_granite/    Runtime, MCP servers, agent harness, evaluator, monitoring
 configs/             Small example and external-dataset benchmark configuration
 scenarios/smarthome/  One runnable sample scenario
 examples/            Four recorded results, full traces, and walkthrough

@@ -1,5 +1,5 @@
 [project]
-name = "edgetoolbench"
+name = "mcp-granite"
 version = "0.1.0"
 description = "MCP-GRANITE: a benchmark for tool-interface granularity and LLM-agent performance"
 readme = "README.md"
@@ -37,14 +37,14 @@ monitoring = [
 Repository = "https://github.com/dpasch01/mcp-granite"
 
 [project.scripts]
-edgetoolbench = "edgetoolbench.cli:main"
+mcp-granite = "mcp_granite.cli:main"
 
 [build-system]
 requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [tool.hatch.build.targets.wheel]
-packages = ["src/edgetoolbench"]
+packages = ["src/mcp_granite"]
 
 [tool.pytest.ini_options]
 asyncio_mode = "auto"
