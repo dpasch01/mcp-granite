@@ -1,0 +1,38 @@
+id: smarthome-004
+domain: smarthome
+name: Check kitchen sensors
+description: >
+  User wants to check the current light level and temperature in the kitchen.
+difficulty: easy
+user_prompt: >
+  What are the current sensor readings in the kitchen? Check the light level and temperature.
+
+gold_standard:
+  primitive:
+    - tool: list_sensors
+      arguments: { location: "kitchen" }
+    - tool: read_sensor
+      arguments: { sensor_id: "SN004" }
+
+  composite_4:
+    - tool: get_room_status
+      arguments:
+        location: "kitchen"
+
+  composite_2:
+    - tool: smart_home_query
+      arguments:
+        action: "room_status"
+        location: "kitchen"
+
+  composite_1:
+    - tool: smart_home
+      arguments:
+        action: "room_status"
+        location: "kitchen"
+
+expected_output:
+  contains:
+    - "kitchen"
+    - "lux"
+  values: {}

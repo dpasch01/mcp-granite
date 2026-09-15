@@ -1,0 +1,13 @@
+{
+  "tool_calls": [],
+  "tool_responses": [],
+  "final_answer": null,
+  "total_tokens_in": 0,
+  "total_tokens_out": 0,
+  "wall_time_seconds": 2.635624384507537,
+  "num_llm_turns": 1,
+  "timed_out": false,
+  "error": null,
+  "started_at": "2026-03-24T11:12:22.911243+00:00",
+  "ended_at": "2026-03-24T11:12:25.546883+00:00"
+}

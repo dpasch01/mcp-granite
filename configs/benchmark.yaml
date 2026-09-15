@@ -1,0 +1,21 @@
+# Full dataset publication is pending. Update scenarios_dir once it is available.
+# Paths are relative to the working directory (run commands from the repository root).
+scenarios_dir: ../mcp-granite-dataset/scenarios
+models: ["granite4:3b"]
+domains:
+  - smarthome
+  - industrial
+  - fleet
+  - agriculture
+  - energy
+  - warehouse
+  - surveillance
+  - healthcare
+  - robotics
+granularities: [primitive, composite_4, composite_2, composite_1]
+fault_rates: [0.0]
+repetitions: 3
+max_difficulty: hard
+max_agent_turns: 20
+agent_timeout_seconds: 120.0
+results_dir: results

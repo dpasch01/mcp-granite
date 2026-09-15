@@ -1,0 +1,12 @@
+# One example scenario, one model, four interfaces, one repetition (4 conditions).
+models: ["granite4:3b"]
+domains: [smarthome]
+scenario_ids: [smarthome-004]
+scenarios_dir: scenarios
+granularities: [primitive, composite_4, composite_2, composite_1]
+fault_rates: [0.0]
+repetitions: 1
+max_difficulty: easy
+max_agent_turns: 20
+agent_timeout_seconds: 120.0
+results_dir: results

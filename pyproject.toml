@@ -1,0 +1,54 @@
+[project]
+name = "edgetoolbench"
+version = "0.1.0"
+description = "MCP-GRANITE: a benchmark for tool-interface granularity and LLM-agent performance"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "google-adk>=1.25.0",
+    "mcp>=1.20.0",
+    "litellm>=1.50.0",
+    "pydantic>=2.0",
+    "pydantic-settings>=2.0",
+    "pyyaml>=6.0",
+    "click>=8.0",
+    "pandas>=2.0",
+    "numpy>=1.26",
+    "scipy>=1.12",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0",
+    "pytest-asyncio>=0.23",
+    "ruff>=0.5",
+]
+analysis = [
+    "matplotlib>=3.8",
+    "seaborn>=0.13",
+    "jupyter>=1.0",
+    "adjusttext>=1.3.0",
+]
+monitoring = [
+    "prometheus-pandas>=0.3",
+]
+
+[project.urls]
+Repository = "https://github.com/dpasch01/mcp-granite"
+
+[project.scripts]
+edgetoolbench = "edgetoolbench.cli:main"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/edgetoolbench"]
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+
+[tool.ruff]
+target-version = "py312"
+line-length = 100
