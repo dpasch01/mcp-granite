@@ -1,0 +1,79 @@
+id: energy-007
+domain: energy
+name: Full microgrid audit
+description: >
+  User requests a comprehensive audit of the entire microgrid including all
+  power sources, load zones, batteries, meters, alerts, and schedules.
+difficulty: hard
+user_prompt: >
+  I need a complete microgrid audit. Check all power sources and their output,
+  all load zones and their status, all battery levels, read every smart meter,
+  review all alerts, and list all scheduled operations. Summarize any issues.
+
+gold_standard:
+  primitive:
+    - tool: list_power_sources
+      arguments: {}
+    - tool: list_load_zones
+      arguments: {}
+    - tool: get_battery_status
+      arguments: { battery_id: "BT001" }
+    - tool: get_battery_status
+      arguments: { battery_id: "BT002" }
+    - tool: get_battery_status
+      arguments: { battery_id: "BT003" }
+    - tool: read_smart_meter
+      arguments: { meter_id: "SM001" }
+    - tool: read_smart_meter
+      arguments: { meter_id: "SM004" }
+    - tool: get_energy_alerts
+      arguments: {}
+    - tool: get_power_source
+      arguments: { source_id: "PS006" }
+
+  composite_4:
+    - tool: get_grid_overview
+      arguments: {}
+    - tool: handle_energy_alert
+      arguments: {}
+    - tool: manage_load_schedule
+      arguments:
+        action: "list_schedule"
+    - tool: manage_power
+      arguments:
+        action: "battery_status"
+
+  composite_2:
+    - tool: energy_query
+      arguments:
+        action: "grid_overview"
+    - tool: energy_query
+      arguments:
+        action: "alerts"
+    - tool: energy_query
+      arguments:
+        action: "schedule"
+    - tool: energy_query
+      arguments:
+        action: "battery_status"
+
+  composite_1:
+    - tool: energy
+      arguments:
+        action: "grid_overview"
+    - tool: energy
+      arguments:
+        action: "alerts"
+    - tool: energy
+      arguments:
+        action: "schedule"
+    - tool: energy
+      arguments:
+        action: "battery_status"
+
+expected_output:
+  contains:
+    - "audit"
+    - "power"
+    - "battery"
+  values: {}

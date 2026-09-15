@@ -1,0 +1,79 @@
+id: agriculture-006
+domain: agriculture
+name: Fix faulty irrigation pump
+description: >
+  User reports the west field irrigation pump isn't working. Check the fault
+  alert, inspect the zone, disable it, and activate a nearby backup zone.
+difficulty: medium
+user_prompt: >
+  The west field irrigation pump seems broken. Check the alerts for it,
+  look at the zone status, disable the faulty zone, and activate the
+  orchard micro-spray as a temporary backup.
+
+gold_standard:
+  primitive:
+    - tool: get_alerts
+      arguments: {}
+    - tool: get_irrigation_zone
+      arguments: { zone_id: "IZ005" }
+    - tool: set_irrigation_zone
+      arguments: { zone_id: "IZ005", status: "idle" }
+    - tool: get_irrigation_zone
+      arguments: { zone_id: "IZ006" }
+    - tool: set_irrigation_zone
+      arguments: { zone_id: "IZ006", status: "active" }
+
+  composite_4:
+    - tool: handle_farm_alert
+      arguments:
+        alert_id: "AL003"
+        corrective_actions: ["disable_zone"]
+    - tool: manage_irrigation
+      arguments:
+        action: "activate"
+        zone_id: "IZ006"
+
+  composite_2:
+    - tool: agriculture_query
+      arguments:
+        action: "alerts"
+    - tool: agriculture_query
+      arguments:
+        action: "irrigation_status"
+        zone_id: "IZ005"
+    - tool: agriculture_control
+      arguments:
+        action: "set_irrigation"
+        zone_id: "IZ005"
+        status: "idle"
+    - tool: agriculture_control
+      arguments:
+        action: "set_irrigation"
+        zone_id: "IZ006"
+        status: "active"
+
+  composite_1:
+    - tool: agriculture
+      arguments:
+        action: "alerts"
+    - tool: agriculture
+      arguments:
+        action: "irrigation_status"
+        zone_id: "IZ005"
+    - tool: agriculture
+      arguments:
+        action: "set_irrigation"
+        zone_id: "IZ005"
+        status: "idle"
+    - tool: agriculture
+      arguments:
+        action: "set_irrigation"
+        zone_id: "IZ006"
+        status: "active"
+
+expected_output:
+  contains:
+    - "irrigation"
+    - "fault"
+    - "west field"
+  values: {}

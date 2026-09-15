@@ -1,0 +1,49 @@
+id: healthcare-007
+domain: healthcare
+name: Full ward assessment
+description: >
+  Complete ward overview assessment: list all patients and their conditions,
+  check all vital signs, review all medical device statuses, check bed sensor
+  occupancy, and review environment readings for all rooms.
+difficulty: hard
+user_prompt: >
+  I need a complete ward assessment. Show me all patients and their conditions,
+  all vital sign readings, every medical device and its status, all bed sensor
+  data, and the environment readings for every room.
+
+gold_standard:
+  primitive:
+    - tool: list_patients
+      arguments: {}
+    - tool: get_vitals
+      arguments: {}
+    - tool: list_devices
+      arguments: {}
+    - tool: get_bed_sensor
+      arguments: {}
+    - tool: list_environment
+      arguments: {}
+
+  composite_4:
+    - tool: get_ward_overview
+      arguments: {}
+
+  composite_2:
+    - tool: healthcare_query
+      arguments:
+        action: "ward_overview"
+
+  composite_1:
+    - tool: healthcare
+      arguments:
+        action: "ward_overview"
+
+expected_output:
+  contains:
+    - "Alice Johnson"
+    - "Bob Martinez"
+    - "critical"
+    - "stable"
+    - "active"
+    - "occupied"
+  values: {}

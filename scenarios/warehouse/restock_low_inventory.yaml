@@ -1,0 +1,53 @@
+id: warehouse-006
+domain: warehouse
+name: Restock low inventory items
+description: >
+  User wants to check inventory levels, identify low-stock items,
+  open a dock door for inbound delivery, and update quantities.
+difficulty: medium
+user_prompt: >
+  Check all inventory levels. Identify items that are low or out of stock.
+  Open Dock C for an inbound delivery of Power Supply units, and update
+  the inventory once received.
+
+gold_standard:
+  primitive:
+    - tool: list_inventory
+      arguments: {}
+    - tool: set_dock_door
+      arguments: { door_id: "DD003", status: "unloading", assigned_truck: "TRUCK-310" }
+    - tool: update_inventory
+      arguments: { slot_id: "IS005", quantity: 40 }
+    - tool: update_inventory
+      arguments: { slot_id: "IS002", quantity: 50 }
+  composite_4:
+    - tool: handle_fulfillment
+      arguments: { action: "check_inventory" }
+    - tool: manage_equipment
+      arguments: { action: "set_dock", door_id: "DD003", status: "unloading", assigned_truck: "TRUCK-310" }
+    - tool: handle_fulfillment
+      arguments: { action: "update_inventory", slot_id: "IS005", quantity: 40 }
+    - tool: handle_fulfillment
+      arguments: { action: "update_inventory", slot_id: "IS002", quantity: 50 }
+  composite_2:
+    - tool: warehouse_query
+      arguments: { action: "inventory" }
+    - tool: warehouse_control
+      arguments: { action: "set_dock", door_id: "DD003", status: "unloading", assigned_truck: "TRUCK-310" }
+    - tool: warehouse_control
+      arguments: { action: "update_inventory", slot_id: "IS005", quantity: 40 }
+    - tool: warehouse_control
+      arguments: { action: "update_inventory", slot_id: "IS002", quantity: 50 }
+  composite_1:
+    - tool: warehouse
+      arguments: { action: "inventory" }
+    - tool: warehouse
+      arguments: { action: "set_dock", door_id: "DD003", status: "unloading", assigned_truck: "TRUCK-310" }
+    - tool: warehouse
+      arguments: { action: "update_inventory", slot_id: "IS005", quantity: 40 }
+    - tool: warehouse
+      arguments: { action: "update_inventory", slot_id: "IS002", quantity: 50 }
+
+expected_output:
+  contains: ["inventory", "restock", "dock"]
+  values: {}

@@ -1,0 +1,45 @@
+id: smarthome-001
+domain: smarthome
+name: Set living room to night mode
+description: >
+  User wants to set the living room to night mode by dimming lights
+  to 20% brightness and lowering the thermostat to 18°C.
+difficulty: easy
+user_prompt: >
+  Set the living room to night mode. Dim the lights to 20% brightness
+  and lower the thermostat to 18 degrees Celsius.
+
+gold_standard:
+  primitive:
+    - tool: list_devices
+      arguments: { location: "living room" }
+    - tool: set_device
+      arguments: { device_id: "DV001", settings: { brightness: 20 } }
+    - tool: set_device
+      arguments: { device_id: "DV002", settings: { target_temp: 18 } }
+
+  composite_4:
+    - tool: set_room_mode
+      arguments:
+        location: "living room"
+        mode: "night"
+
+  composite_2:
+    - tool: smart_home_control
+      arguments:
+        action: "set_mode"
+        location: "living room"
+        mode: "night"
+
+  composite_1:
+    - tool: smart_home
+      arguments:
+        action: "set_mode"
+        location: "living room"
+        mode: "night"
+
+expected_output:
+  contains:
+    - "living room"
+    - "night"
+  values: {}

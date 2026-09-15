@@ -1,0 +1,72 @@
+id: industrial-006
+domain: industrial
+name: Multi-machine alert triage
+description: >
+  Multiple machines have active alerts. User wants to check all alerts,
+  assess health of each affected machine, and acknowledge the most
+  critical alerts first.
+difficulty: medium
+user_prompt: >
+  We have multiple active alerts on the factory floor. Check all active alerts,
+  assess the health of the conveyor belt MC003 and welding robot MC004,
+  and acknowledge the critical alerts first.
+
+gold_standard:
+  primitive:
+    - tool: get_active_alerts
+      arguments: {}
+    - tool: get_machine_status
+      arguments: { machine_id: "MC003" }
+    - tool: read_telemetry
+      arguments: { machine_id: "MC003" }
+    - tool: get_machine_status
+      arguments: { machine_id: "MC004" }
+    - tool: read_telemetry
+      arguments: { machine_id: "MC004" }
+    - tool: acknowledge_alert
+      arguments: { alert_id: "AL001" }
+
+  composite_4:
+    - tool: assess_machine_health
+      arguments: { machine_id: "MC003" }
+    - tool: assess_machine_health
+      arguments: { machine_id: "MC004" }
+    - tool: handle_fault
+      arguments:
+        machine_id: "MC003"
+        create_order: false
+
+  composite_2:
+    - tool: industrial_monitor
+      arguments:
+        action: "machine_health"
+        machine_id: "MC003"
+    - tool: industrial_monitor
+      arguments:
+        action: "machine_health"
+        machine_id: "MC004"
+    - tool: industrial_action
+      arguments:
+        action: "acknowledge_alert"
+        alert_id: "AL001"
+
+  composite_1:
+    - tool: industrial
+      arguments:
+        action: "machine_health"
+        machine_id: "MC003"
+    - tool: industrial
+      arguments:
+        action: "machine_health"
+        machine_id: "MC004"
+    - tool: industrial
+      arguments:
+        action: "acknowledge_alert"
+        alert_id: "AL001"
+
+expected_output:
+  contains:
+    - "MC003"
+    - "MC004"
+    - "critical"
+  values: {}

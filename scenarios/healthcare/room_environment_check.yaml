@@ -1,0 +1,61 @@
+id: healthcare-006
+domain: healthcare
+name: Room environment check
+description: >
+  Check the environment readings for room 104 (noise level is above threshold),
+  verify the device status in that room, and check on the patient there.
+difficulty: medium
+user_prompt: >
+  I got a flag that room 104 environment might be out of spec. Check the
+  room environment readings, the medical devices in that room, and the
+  patient status there.
+
+gold_standard:
+  primitive:
+    - tool: list_environment
+      arguments: { room: "104" }
+    - tool: list_devices
+      arguments: { room: "104" }
+    - tool: list_patients
+      arguments: { room: "104" }
+
+  composite_4:
+    - tool: get_ward_overview
+      arguments:
+        room: "104"
+
+  composite_2:
+    - tool: healthcare_query
+      arguments:
+        action: "list_environment"
+        room: "104"
+    - tool: healthcare_query
+      arguments:
+        action: "list_devices"
+        room: "104"
+    - tool: healthcare_query
+      arguments:
+        action: "list_patients"
+        room: "104"
+
+  composite_1:
+    - tool: healthcare
+      arguments:
+        action: "list_environment"
+        room: "104"
+    - tool: healthcare
+      arguments:
+        action: "list_devices"
+        room: "104"
+    - tool: healthcare
+      arguments:
+        action: "list_patients"
+        room: "104"
+
+expected_output:
+  contains:
+    - "noise_level"
+    - "104"
+    - "defibrillator"
+    - "David Lee"
+  values: {}

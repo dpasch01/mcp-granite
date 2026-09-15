@@ -1,0 +1,36 @@
+id: robotics-001
+domain: robotics
+name: Check assembly line robots
+description: >
+  User wants to see which robots are currently on the assembly line and their statuses.
+difficulty: easy
+user_prompt: >
+  What robots are currently on the assembly line? Show me their statuses and battery levels.
+
+gold_standard:
+  primitive:
+    - tool: list_robots
+      arguments: { workspace: "assembly_line" }
+
+  composite_4:
+    - tool: get_workspace_overview
+      arguments:
+        workspace: "assembly_line"
+
+  composite_2:
+    - tool: robotics_query
+      arguments:
+        action: "robot_status"
+        workspace: "assembly_line"
+
+  composite_1:
+    - tool: robotics
+      arguments:
+        action: "robot_status"
+        workspace: "assembly_line"
+
+expected_output:
+  contains:
+    - "assembly"
+    - "arm"
+  values: {}

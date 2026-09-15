@@ -1,0 +1,150 @@
+id: industrial-009
+domain: industrial
+name: Full maintenance planning
+description: >
+  Comprehensive end-of-week maintenance planning. Check all machines,
+  review all maintenance histories, identify machines due for service,
+  create work orders, assign to maintenance team, and acknowledge
+  any outstanding alerts.
+difficulty: hard
+user_prompt: >
+  It's Friday afternoon. Do a full maintenance planning session. Check the
+  health and maintenance history of all four machines (MC001-MC004).
+  Acknowledge any outstanding alerts. Create work orders for any machines
+  that need service, assign them all to the Maintenance Team, and set
+  them to in_progress status.
+
+gold_standard:
+  primitive:
+    - tool: list_machines
+      arguments: {}
+    - tool: get_machine_status
+      arguments: { machine_id: "MC001" }
+    - tool: get_maintenance_history
+      arguments: { machine_id: "MC001" }
+    - tool: get_machine_status
+      arguments: { machine_id: "MC002" }
+    - tool: get_maintenance_history
+      arguments: { machine_id: "MC002" }
+    - tool: get_machine_status
+      arguments: { machine_id: "MC003" }
+    - tool: get_maintenance_history
+      arguments: { machine_id: "MC003" }
+    - tool: get_machine_status
+      arguments: { machine_id: "MC004" }
+    - tool: get_maintenance_history
+      arguments: { machine_id: "MC004" }
+    - tool: get_active_alerts
+      arguments: {}
+    - tool: acknowledge_alert
+      arguments: { alert_id: "AL001" }
+    - tool: acknowledge_alert
+      arguments: { alert_id: "AL002" }
+    - tool: create_work_order
+      arguments:
+        machine_id: "MC004"
+        priority: "medium"
+        description: "Weekly maintenance - elevated vibration readings"
+    - tool: update_work_order
+      arguments:
+        order_id: "WO002"
+        status: "in_progress"
+        assigned_to: "Maintenance Team"
+
+  composite_4:
+    - tool: get_floor_overview
+      arguments: {}
+    - tool: assess_machine_health
+      arguments: { machine_id: "MC001" }
+    - tool: assess_machine_health
+      arguments: { machine_id: "MC002" }
+    - tool: assess_machine_health
+      arguments: { machine_id: "MC003" }
+    - tool: assess_machine_health
+      arguments: { machine_id: "MC004" }
+    - tool: handle_fault
+      arguments:
+        machine_id: "MC003"
+        create_order: false
+    - tool: schedule_maintenance
+      arguments:
+        machine_id: "MC004"
+        reason: "Weekly maintenance - elevated vibration"
+        priority: "medium"
+
+  composite_2:
+    - tool: industrial_monitor
+      arguments:
+        action: "floor_overview"
+    - tool: industrial_monitor
+      arguments:
+        action: "machine_health"
+        machine_id: "MC001"
+    - tool: industrial_monitor
+      arguments:
+        action: "machine_health"
+        machine_id: "MC002"
+    - tool: industrial_monitor
+      arguments:
+        action: "machine_health"
+        machine_id: "MC003"
+    - tool: industrial_monitor
+      arguments:
+        action: "machine_health"
+        machine_id: "MC004"
+    - tool: industrial_action
+      arguments:
+        action: "acknowledge_alert"
+        alert_id: "AL001"
+    - tool: industrial_action
+      arguments:
+        action: "acknowledge_alert"
+        alert_id: "AL002"
+    - tool: industrial_action
+      arguments:
+        action: "schedule_maintenance"
+        machine_id: "MC004"
+        reason: "Weekly maintenance - elevated vibration"
+        priority: "medium"
+
+  composite_1:
+    - tool: industrial
+      arguments:
+        action: "floor_overview"
+    - tool: industrial
+      arguments:
+        action: "machine_health"
+        machine_id: "MC001"
+    - tool: industrial
+      arguments:
+        action: "machine_health"
+        machine_id: "MC002"
+    - tool: industrial
+      arguments:
+        action: "machine_health"
+        machine_id: "MC003"
+    - tool: industrial
+      arguments:
+        action: "machine_health"
+        machine_id: "MC004"
+    - tool: industrial
+      arguments:
+        action: "acknowledge_alert"
+        alert_id: "AL001"
+    - tool: industrial
+      arguments:
+        action: "acknowledge_alert"
+        alert_id: "AL002"
+    - tool: industrial
+      arguments:
+        action: "schedule_maintenance"
+        machine_id: "MC004"
+        reason: "Weekly maintenance - elevated vibration"
+        priority: "medium"
+
+expected_output:
+  contains:
+    - "maintenance"
+    - "MC004"
+    - "Maintenance Team"
+  values: {}

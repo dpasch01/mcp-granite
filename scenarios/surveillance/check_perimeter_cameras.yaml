@@ -1,0 +1,38 @@
+id: surveillance-001
+domain: surveillance
+name: Check perimeter cameras
+description: >
+  User wants to check the status of cameras on the north fence perimeter
+  to see if they are recording and have night vision enabled.
+difficulty: easy
+user_prompt: >
+  Check the cameras at the north fence. Are they recording? Is night vision on?
+
+gold_standard:
+  primitive:
+    - tool: list_cameras
+      arguments: { location: "north fence" }
+
+  composite_4:
+    - tool: get_security_overview
+      arguments:
+        location: "north fence"
+
+  composite_2:
+    - tool: surveillance_query
+      arguments:
+        action: "cameras"
+        location: "north fence"
+
+  composite_1:
+    - tool: surveillance
+      arguments:
+        action: "cameras"
+        location: "north fence"
+
+expected_output:
+  contains:
+    - "north fence"
+    - "recording"
+    - "night_vision"
+  values: {}

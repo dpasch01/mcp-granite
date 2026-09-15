@@ -1,0 +1,35 @@
+id: energy-003
+domain: energy
+name: Read grid interconnect meter
+description: >
+  User wants to check the grid interconnect meter reading.
+difficulty: easy
+user_prompt: >
+  What does the grid interconnect meter show right now?
+
+gold_standard:
+  primitive:
+    - tool: read_smart_meter
+      arguments: { meter_id: "SM004" }
+
+  composite_4:
+    - tool: get_grid_overview
+      arguments: {}
+
+  composite_2:
+    - tool: energy_query
+      arguments:
+        action: "meter_reading"
+        meter_id: "SM004"
+
+  composite_1:
+    - tool: energy
+      arguments:
+        action: "meter_reading"
+        meter_id: "SM004"
+
+expected_output:
+  contains:
+    - "grid"
+    - "meter"
+  values: {}

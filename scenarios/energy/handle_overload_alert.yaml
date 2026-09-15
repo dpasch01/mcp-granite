@@ -1,0 +1,65 @@
+id: energy-004
+domain: energy
+name: Handle manufacturing overload
+description: >
+  User wants to investigate the manufacturing floor overload alert,
+  check the current load, and shed non-critical loads to compensate.
+difficulty: medium
+user_prompt: >
+  The manufacturing floor is overloaded. Check the alert, see what the
+  current load is, and shed the EV charging station load to bring
+  things back to normal.
+
+gold_standard:
+  primitive:
+    - tool: get_energy_alerts
+      arguments: {}
+    - tool: list_load_zones
+      arguments: {}
+    - tool: set_load_zone
+      arguments: { zone_id: "LZ005", status: "shed" }
+    - tool: set_load_zone
+      arguments: { zone_id: "LZ004", status: "normal" }
+
+  composite_4:
+    - tool: handle_energy_alert
+      arguments:
+        alert_id: "EA001"
+        acknowledge: true
+        corrective_actions: ["shed_load"]
+    - tool: manage_load_schedule
+      arguments:
+        action: "load_status"
+
+  composite_2:
+    - tool: energy_query
+      arguments:
+        action: "alerts"
+    - tool: energy_query
+      arguments:
+        action: "load_status"
+    - tool: energy_control
+      arguments:
+        action: "set_load"
+        zone_id: "LZ005"
+        status: "shed"
+
+  composite_1:
+    - tool: energy
+      arguments:
+        action: "alerts"
+    - tool: energy
+      arguments:
+        action: "load_status"
+    - tool: energy
+      arguments:
+        action: "set_load"
+        zone_id: "LZ005"
+        status: "shed"
+
+expected_output:
+  contains:
+    - "overload"
+    - "manufacturing"
+    - "shed"
+  values: {}

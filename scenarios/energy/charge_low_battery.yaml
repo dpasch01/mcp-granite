@@ -1,0 +1,94 @@
+id: energy-005
+domain: energy
+name: Charge critically low battery
+description: >
+  User is alerted that the lab UPS battery is critically low. Check its status,
+  increase the charge rate, and schedule a full charge overnight.
+difficulty: medium
+user_prompt: >
+  The lab UPS battery is critically low. Check its current charge level,
+  increase the charging rate to maximum, and schedule a full overnight
+  charge session.
+
+gold_standard:
+  primitive:
+    - tool: get_battery_status
+      arguments: { battery_id: "BT003" }
+    - tool: set_battery
+      arguments: { battery_id: "BT003", charge_rate_kw: 10.0, status: "charging" }
+    - tool: create_schedule_entry
+      arguments:
+        name: "Lab UPS Overnight Charge"
+        target_id: "BT003"
+        action: "charge"
+        scheduled_time: "2025-06-01T22:00:00"
+        parameters: { rate_kw: 10 }
+    - tool: get_energy_alerts
+      arguments: { severity: "critical" }
+
+  composite_4:
+    - tool: manage_power
+      arguments:
+        action: "battery_status"
+        battery_id: "BT003"
+    - tool: manage_power
+      arguments:
+        action: "set_battery"
+        battery_id: "BT003"
+        charge_rate_kw: 10.0
+        status: "charging"
+    - tool: manage_load_schedule
+      arguments:
+        action: "create_schedule"
+        name: "Lab UPS Overnight Charge"
+        target_id: "BT003"
+        operation: "charge"
+        scheduled_time: "2025-06-01T22:00:00"
+        parameters: { rate_kw: 10 }
+
+  composite_2:
+    - tool: energy_query
+      arguments:
+        action: "battery_status"
+        battery_id: "BT003"
+    - tool: energy_control
+      arguments:
+        action: "set_battery"
+        battery_id: "BT003"
+        charge_rate_kw: 10.0
+        status: "charging"
+    - tool: energy_control
+      arguments:
+        action: "create_schedule"
+        name: "Lab UPS Overnight Charge"
+        target_id: "BT003"
+        operation: "charge"
+        scheduled_time: "2025-06-01T22:00:00"
+        parameters: { rate_kw: 10 }
+
+  composite_1:
+    - tool: energy
+      arguments:
+        action: "battery_status"
+        battery_id: "BT003"
+    - tool: energy
+      arguments:
+        action: "set_battery"
+        battery_id: "BT003"
+        charge_rate_kw: 10.0
+        status: "charging"
+    - tool: energy
+      arguments:
+        action: "create_schedule"
+        name: "Lab UPS Overnight Charge"
+        target_id: "BT003"
+        operation: "charge"
+        scheduled_time: "2025-06-01T22:00:00"
+        parameters: { rate_kw: 10 }
+
+expected_output:
+  contains:
+    - "battery"
+    - "charge"
+    - "UPS"
+  values: {}

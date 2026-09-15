@@ -1,0 +1,104 @@
+id: fleet-009
+domain: fleet
+name: Emergency fleet rebalancing
+description: >
+  Vehicle VH002 has broken down with two active deliveries. User needs
+  to diagnose the vehicle, reassign all affected deliveries, dispatch
+  pending deliveries to fill the gap, check all routes, and ensure
+  no delivery is left unassigned.
+difficulty: hard
+user_prompt: >
+  Emergency! Vehicle VH002 has broken down. It has deliveries DL001 and
+  DL002 assigned to it. Diagnose the vehicle issue, reassign those
+  deliveries to available vehicles, then dispatch the pending deliveries
+  DL003 and DL004 as well. Check all routes and give me a final status
+  of every delivery and vehicle.
+
+gold_standard:
+  primitive:
+    - tool: get_vehicle_diagnostics
+      arguments: { vehicle_id: "VH002" }
+    - tool: get_delivery_status
+      arguments: { delivery_id: "DL001" }
+    - tool: get_delivery_status
+      arguments: { delivery_id: "DL002" }
+    - tool: list_vehicles
+      arguments: { status_filter: "available" }
+    - tool: list_drivers
+      arguments: { status_filter: "available" }
+    - tool: assign_delivery
+      arguments: { delivery_id: "DL001", vehicle_id: "VH001", driver_id: "DR002" }
+    - tool: assign_delivery
+      arguments: { delivery_id: "DL002", vehicle_id: "VH003", driver_id: "DR002" }
+    - tool: get_route_info
+      arguments: { origin: "Warehouse A", destination: "Customer Zone B" }
+    - tool: assign_delivery
+      arguments: { delivery_id: "DL003", vehicle_id: "VH004", driver_id: "DR001" }
+    - tool: update_delivery_status
+      arguments: { delivery_id: "DL003", status: "in_transit" }
+    - tool: get_route_info
+      arguments: { origin: "Warehouse B", destination: "Customer Zone C" }
+    - tool: assign_delivery
+      arguments: { delivery_id: "DL004", vehicle_id: "VH001", driver_id: "DR003" }
+      required: false
+    - tool: update_delivery_status
+      arguments: { delivery_id: "DL004", status: "in_transit" }
+      required: false
+
+  composite_4:
+    - tool: handle_vehicle_issue
+      arguments:
+        vehicle_id: "VH002"
+        reassign: true
+    - tool: dispatch_delivery
+      arguments:
+        delivery_id: "DL003"
+    - tool: dispatch_delivery
+      arguments:
+        delivery_id: "DL004"
+    - tool: get_fleet_overview
+      arguments: {}
+
+  composite_2:
+    - tool: fleet_action
+      arguments:
+        action: "handle_issue"
+        vehicle_id: "VH002"
+        reassign: true
+    - tool: fleet_action
+      arguments:
+        action: "dispatch"
+        delivery_id: "DL003"
+    - tool: fleet_action
+      arguments:
+        action: "dispatch"
+        delivery_id: "DL004"
+    - tool: fleet_query
+      arguments:
+        action: "fleet_overview"
+
+  composite_1:
+    - tool: fleet
+      arguments:
+        action: "handle_issue"
+        vehicle_id: "VH002"
+        reassign: true
+    - tool: fleet
+      arguments:
+        action: "dispatch"
+        delivery_id: "DL003"
+    - tool: fleet
+      arguments:
+        action: "dispatch"
+        delivery_id: "DL004"
+    - tool: fleet
+      arguments:
+        action: "fleet_overview"
+
+expected_output:
+  contains:
+    - "VH002"
+    - "reassign"
+    - "DL003"
+    - "dispatch"
+  values: {}

@@ -1,0 +1,36 @@
+id: agriculture-001
+domain: agriculture
+name: Check soil moisture
+description: >
+  User wants to check the current soil moisture level in the north field.
+difficulty: easy
+user_prompt: >
+  What is the current soil moisture reading in the north field?
+
+gold_standard:
+  primitive:
+    - tool: read_sensor
+      arguments: { sensor_id: "AS001" }
+
+  composite_4:
+    - tool: get_field_overview
+      arguments:
+        field_zone: "north field"
+
+  composite_2:
+    - tool: agriculture_query
+      arguments:
+        action: "sensor_reading"
+        sensor_id: "AS001"
+
+  composite_1:
+    - tool: agriculture
+      arguments:
+        action: "sensor_reading"
+        sensor_id: "AS001"
+
+expected_output:
+  contains:
+    - "moisture"
+    - "north field"
+  values: {}

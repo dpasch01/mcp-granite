@@ -1,0 +1,133 @@
+id: robotics-009
+domain: robotics
+name: Shift production planning
+description: >
+  User is planning the next production shift. Needs to review all current tasks,
+  check robot battery levels and availability, create new production tasks, assign
+  idle robots to queued tasks, and verify all safety systems are operational.
+difficulty: hard
+user_prompt: >
+  Plan the next production shift. Review all tasks to see what's pending. Check which
+  robots are available and their battery levels. Create a new pick-and-place task for
+  the assembly line with priority 1. Assign the idle Assembly Arm B to the queued weld
+  task. Also verify all safety interlocks are in good shape and check for any sensor
+  warnings across the facility.
+
+gold_standard:
+  primitive:
+    - tool: manage_task
+      arguments: { action: "list" }
+    - tool: list_robots
+      arguments: {}
+    - tool: manage_task
+      arguments:
+        action: "create"
+        name: "Pick and Place Shift 2"
+        task_type: "pick_and_place"
+        workspace: "assembly_line"
+        priority: 1
+        parameters: { source_bin: "BIN-B", target_fixture: "FIX-2" }
+    - tool: manage_task
+      arguments: { action: "update", task_id: "TQ002", assigned_robot: "RB002", status: "assigned" }
+    - tool: set_robot
+      arguments: { robot_id: "RB002", status: "active", current_task: "TQ002" }
+    - tool: list_interlocks
+      arguments: {}
+    - tool: get_sensor_readings
+      arguments: {}
+    - tool: get_operation_log
+      arguments: { severity: "warning" }
+
+  composite_4:
+    - tool: handle_robot_task
+      arguments:
+        action: "list"
+    - tool: manage_robot_fleet
+      arguments:
+        action: "robot_status"
+    - tool: handle_robot_task
+      arguments:
+        action: "create"
+        name: "Pick and Place Shift 2"
+        task_type: "pick_and_place"
+        workspace: "assembly_line"
+        priority: 1
+        parameters: { source_bin: "BIN-B", target_fixture: "FIX-2" }
+    - tool: handle_robot_task
+      arguments:
+        action: "assign"
+        task_id: "TQ002"
+        assigned_robot: "RB002"
+    - tool: monitor_safety
+      arguments: {}
+
+  composite_2:
+    - tool: robotics_query
+      arguments:
+        action: "tasks"
+    - tool: robotics_query
+      arguments:
+        action: "robot_status"
+    - tool: robotics_control
+      arguments:
+        action: "create_task"
+        name: "Pick and Place Shift 2"
+        task_type: "pick_and_place"
+        workspace: "assembly_line"
+        priority: 1
+        parameters: { source_bin: "BIN-B", target_fixture: "FIX-2" }
+    - tool: robotics_control
+      arguments:
+        action: "assign_task"
+        task_id: "TQ002"
+        assigned_robot: "RB002"
+    - tool: robotics_query
+      arguments:
+        action: "interlocks"
+    - tool: robotics_query
+      arguments:
+        action: "sensor_readings"
+    - tool: robotics_query
+      arguments:
+        action: "operation_log"
+        severity: "warning"
+
+  composite_1:
+    - tool: robotics
+      arguments:
+        action: "tasks"
+    - tool: robotics
+      arguments:
+        action: "robot_status"
+    - tool: robotics
+      arguments:
+        action: "create_task"
+        name: "Pick and Place Shift 2"
+        task_type: "pick_and_place"
+        workspace: "assembly_line"
+        priority: 1
+        parameters: { source_bin: "BIN-B", target_fixture: "FIX-2" }
+    - tool: robotics
+      arguments:
+        action: "assign_task"
+        task_id: "TQ002"
+        assigned_robot: "RB002"
+    - tool: robotics
+      arguments:
+        action: "interlocks"
+    - tool: robotics
+      arguments:
+        action: "sensor_readings"
+    - tool: robotics
+      arguments:
+        action: "operation_log"
+        severity: "warning"
+
+expected_output:
+  contains:
+    - "pick_and_place"
+    - "RB002"
+    - "assigned"
+    - "interlock"
+    - "warning"
+  values: {}

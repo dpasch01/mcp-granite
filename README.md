@@ -3,10 +3,11 @@
 A benchmark system for evaluating how Model Context Protocol (MCP) tool-interface
 granularity affects LLM-agent performance, robustness, latency, and resource usage.
 
-This repository contains the runnable system and **one sample scenario with four
-recorded executions**. The full scenario dataset and experiment outputs are
-will be published in a separate repository; its link will be added when available.
-The CLI command is `mcp-granite`; the Python package is `mcp_granite`.
+This repository contains the runnable system, **81 scenarios across nine edge
+domains**, and **four recorded executions** of one sample scenario. The complete
+experiment outputs will be published separately; their repository link will be
+added when available. The CLI command is `mcp-granite`; the Python package is
+`mcp_granite`.
 
 ## System
 
@@ -89,33 +90,32 @@ for optional configuration (`MCP_GRANITE_` environment-variable prefix) and
 `uv run mcp-granite list-models` for registry
 entries. Provider availability depends on your account and installed backend.
 
-## Use the separate dataset
+## Run the bundled scenario library
 
-The dataset repository is planned for a later release. The bundled sample works
-without it. Once the dataset is available, set `scenarios_dir` in
-[configs/benchmark.yaml](configs/benchmark.yaml) to the directory containing its
-domain folders:
-
-```text
-<dataset scenario directory>/
-  smarthome/*.yaml
-  industrial/*.yaml
-  fleet/*.yaml
-  ...
-```
-
-The default path in that config assumes a sibling checkout named
-`mcp-granite-dataset` with a `scenarios/` directory. Adjust it to your checkout.
-All relative paths are resolved from the working directory.
+The [scenario library](scenarios/README.md) contains 81 scenarios: nine each for
+smart home, industrial IoT, fleet, agriculture, energy, warehouse, surveillance,
+healthcare, and robotics. Each domain has three easy, three medium, and three
+hard scenarios. Every scenario includes gold-standard calls for all four
+interface levels.
 
 ```bash
+uv run mcp-granite list-scenarios
+uv run mcp-granite list-scenarios --domain robotics
 uv run mcp-granite run --config configs/benchmark.yaml
 ```
 
+The benchmark config uses the bundled `scenarios/` directory, one model,
+all four levels, no faults, and three repetitions: **972 conditions** in total.
 Edit the model list, domains, repetitions, and fault rates for your experiment.
-Scenarios declare gold-standard calls for each supported interface; the matrix
-generator skips interfaces absent from a scenario's gold standard. A benchmark
-run uses the external dataset directly, so no dataset copy is needed here.
+The default sample config still runs only `smarthome-004` across four levels.
+
+To use a separate scenario collection, set `scenarios_dir` in your experiment
+YAML to a directory containing domain subdirectories with scenario YAML files.
+Relative paths are resolved from the working directory. The matrix generator
+skips interfaces absent from a scenario's gold standard.
+
+The complete experiment outputs are not included; their separate publication
+is planned for a later release.
 
 ## Evaluation and analysis
 
@@ -157,16 +157,16 @@ uv build
 ```
 
 Tests use the bundled example and temporary scenario fixtures; they do not
-require the full dataset, an LLM service, or provider credentials.
+require an LLM service or provider credentials.
 
 ## Repository layout
 
 ```text
-src/mcp_granite/    Runtime, MCP servers, agent harness, evaluator, monitoring
-configs/             Small example and external-dataset benchmark configuration
-scenarios/smarthome/  One runnable sample scenario
+src/mcp_granite/      Runtime, MCP servers, agent harness, evaluator, monitoring
+configs/             Small example and full scenario benchmark configuration
+scenarios/           81 scenarios across nine edge domains
 examples/            Four recorded results, full traces, and walkthrough
-tests/               Tests independent of the full dataset
+tests/               Evaluation, mock-store, loader, and sample tests
 analyze_results.py   Analysis of completed benchmark runs
 uv.lock              Dependency lockfile
 ```

@@ -1,0 +1,37 @@
+id: robotics-002
+domain: robotics
+name: View queued tasks
+description: >
+  User wants to view all currently queued tasks in the task queue to see what work is pending.
+difficulty: easy
+user_prompt: >
+  Show me all tasks that are currently queued and waiting to be assigned.
+
+gold_standard:
+  primitive:
+    - tool: manage_task
+      arguments: { action: "list", status: "queued" }
+
+  composite_4:
+    - tool: handle_robot_task
+      arguments:
+        action: "list"
+        status: "queued"
+
+  composite_2:
+    - tool: robotics_query
+      arguments:
+        action: "tasks"
+        status: "queued"
+
+  composite_1:
+    - tool: robotics
+      arguments:
+        action: "tasks"
+        status: "queued"
+
+expected_output:
+  contains:
+    - "queued"
+    - "weld"
+  values: {}

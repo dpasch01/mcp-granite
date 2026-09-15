@@ -1,0 +1,26 @@
+id: warehouse-001
+domain: warehouse
+name: Check conveyor status
+description: >
+  User wants to check the status of the sorting line conveyors.
+difficulty: easy
+user_prompt: >
+  What's the current status of the sorting line conveyors?
+
+gold_standard:
+  primitive:
+    - tool: list_conveyors
+      arguments: { zone: "sorting" }
+  composite_4:
+    - tool: manage_equipment
+      arguments: { action: "conveyor_status", zone: "sorting" }
+  composite_2:
+    - tool: warehouse_query
+      arguments: { action: "conveyor_status", zone: "sorting" }
+  composite_1:
+    - tool: warehouse
+      arguments: { action: "conveyor_status", zone: "sorting" }
+
+expected_output:
+  contains: ["conveyor", "sorting"]
+  values: {}

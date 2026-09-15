@@ -1,0 +1,110 @@
+id: smarthome-008
+domain: smarthome
+name: Diagnose energy waste
+description: >
+  User suspects energy waste and wants a full audit: check all room statuses,
+  identify devices left on unnecessarily, check sensor readings for
+  unoccupied rooms, turn off unnecessary devices, and adjust thermostat.
+difficulty: hard
+user_prompt: >
+  I think we're wasting energy. Check all rooms for devices that are on
+  unnecessarily. Look at the motion sensors — if a room has no motion,
+  turn off lights and lower the thermostat. Give me a full report of
+  what you find and what changes you make.
+
+gold_standard:
+  primitive:
+    - tool: list_sensors
+      arguments: {}
+    - tool: read_sensor
+      arguments: { sensor_id: "SN003" }
+    - tool: read_sensor
+      arguments: { sensor_id: "SN001" }
+    - tool: list_devices
+      arguments: {}
+    - tool: get_device_status
+      arguments: { device_id: "DV001" }
+    - tool: get_device_status
+      arguments: { device_id: "DV002" }
+    - tool: get_device_status
+      arguments: { device_id: "DV006" }
+    - tool: set_device
+      arguments: { device_id: "DV001", settings: { brightness: 0, status: "off" } }
+    - tool: set_device
+      arguments: { device_id: "DV002", settings: { target_temp: 18 } }
+
+  composite_4:
+    - tool: get_room_status
+      arguments: { location: "living room" }
+    - tool: get_room_status
+      arguments: { location: "kitchen" }
+    - tool: get_room_status
+      arguments: { location: "bedroom" }
+    - tool: get_room_status
+      arguments: { location: "hallway" }
+    - tool: set_room_mode
+      arguments:
+        location: "living room"
+        mode: "away"
+
+  composite_2:
+    - tool: smart_home_query
+      arguments:
+        action: "room_status"
+        location: "living room"
+    - tool: smart_home_query
+      arguments:
+        action: "room_status"
+        location: "kitchen"
+    - tool: smart_home_query
+      arguments:
+        action: "room_status"
+        location: "bedroom"
+    - tool: smart_home_query
+      arguments:
+        action: "room_status"
+        location: "hallway"
+    - tool: smart_home_control
+      arguments:
+        action: "set_device"
+        device_id: "DV001"
+        settings: { brightness: 0, status: "off" }
+    - tool: smart_home_control
+      arguments:
+        action: "set_device"
+        device_id: "DV002"
+        settings: { target_temp: 18 }
+
+  composite_1:
+    - tool: smart_home
+      arguments:
+        action: "room_status"
+        location: "living room"
+    - tool: smart_home
+      arguments:
+        action: "room_status"
+        location: "kitchen"
+    - tool: smart_home
+      arguments:
+        action: "room_status"
+        location: "bedroom"
+    - tool: smart_home
+      arguments:
+        action: "room_status"
+        location: "hallway"
+    - tool: smart_home
+      arguments:
+        action: "set_device"
+        device_id: "DV001"
+        settings: { brightness: 0, status: "off" }
+    - tool: smart_home
+      arguments:
+        action: "set_device"
+        device_id: "DV002"
+        settings: { target_temp: 18 }
+
+expected_output:
+  contains:
+    - "energy"
+    - "motion"
+  values: {}

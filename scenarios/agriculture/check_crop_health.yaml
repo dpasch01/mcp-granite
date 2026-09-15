@@ -1,0 +1,38 @@
+id: agriculture-003
+domain: agriculture
+name: Check crop health
+description: >
+  User wants to see the health status of the greenhouse tomatoes.
+difficulty: easy
+user_prompt: >
+  How are the tomatoes doing in the greenhouse? Check their health status.
+
+gold_standard:
+  primitive:
+    - tool: list_crops
+      arguments: { field_zone: "greenhouse" }
+    - tool: get_crop
+      arguments: { crop_id: "CR003" }
+
+  composite_4:
+    - tool: get_field_overview
+      arguments:
+        field_zone: "greenhouse"
+
+  composite_2:
+    - tool: agriculture_query
+      arguments:
+        action: "crop_status"
+        crop_id: "CR003"
+
+  composite_1:
+    - tool: agriculture
+      arguments:
+        action: "crop_status"
+        crop_id: "CR003"
+
+expected_output:
+  contains:
+    - "tomato"
+    - "stressed"
+  values: {}

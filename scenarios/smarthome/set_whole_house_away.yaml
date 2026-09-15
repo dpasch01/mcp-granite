@@ -1,0 +1,80 @@
+id: smarthome-006
+domain: smarthome
+name: Set whole-house away mode
+description: >
+  User is leaving for vacation and wants to set the entire house to away mode,
+  verify all doors are locked, cameras recording, and check the current status
+  of all rooms first.
+difficulty: medium
+user_prompt: >
+  I'm leaving for vacation. First check the status of all rooms, then set
+  the whole house to away mode. Make sure all doors are locked and cameras
+  are recording. Set the thermostat to 16 degrees.
+
+gold_standard:
+  primitive:
+    - tool: list_devices
+      arguments: {}
+    - tool: list_sensors
+      arguments: {}
+    - tool: set_device
+      arguments: { device_id: "DV003", settings: { status: "on", locked: true } }
+    - tool: set_device
+      arguments: { device_id: "DV004", settings: { status: "on", recording: true } }
+    - tool: set_device
+      arguments: { device_id: "DV002", settings: { target_temp: 16, mode: "away" } }
+    - tool: set_device
+      arguments: { device_id: "DV001", settings: { status: "off" } }
+    - tool: set_device
+      arguments: { device_id: "DV006", settings: { status: "off" } }
+
+  composite_4:
+    - tool: get_room_status
+      arguments:
+        location: "living room"
+    - tool: get_room_status
+      arguments:
+        location: "bedroom"
+    - tool: set_room_mode
+      arguments:
+        location: "living room"
+        mode: "away"
+        custom_settings: { target_temp: 16 }
+
+  composite_2:
+    - tool: smart_home_query
+      arguments:
+        action: "room_status"
+        location: "living room"
+    - tool: smart_home_query
+      arguments:
+        action: "room_status"
+        location: "bedroom"
+    - tool: smart_home_control
+      arguments:
+        action: "set_mode"
+        location: "living room"
+        mode: "away"
+        custom_settings: { target_temp: 16 }
+
+  composite_1:
+    - tool: smart_home
+      arguments:
+        action: "room_status"
+        location: "living room"
+    - tool: smart_home
+      arguments:
+        action: "room_status"
+        location: "bedroom"
+    - tool: smart_home
+      arguments:
+        action: "set_mode"
+        location: "living room"
+        mode: "away"
+        custom_settings: { target_temp: 16 }
+
+expected_output:
+  contains:
+    - "away"
+    - "locked"
+  values: {}

@@ -1,0 +1,90 @@
+id: surveillance-005
+domain: surveillance
+name: Prepare VIP access
+description: >
+  A VIP visitor is arriving. User wants to unlock the front door and lobby
+  turnstile, lower the access level on the front door to public (1),
+  and verify the main entrance camera is recording.
+difficulty: medium
+user_prompt: >
+  A VIP is arriving shortly. Unlock the front door and the lobby turnstile.
+  Set the front door access level to 1 (public). Also make sure the main
+  entrance camera is recording.
+
+gold_standard:
+  primitive:
+    - tool: set_access_point
+      arguments: { point_id: "AP001", status: "unlocked", access_level: 1 }
+    - tool: set_access_point
+      arguments: { point_id: "AP005", status: "unlocked" }
+    - tool: list_cameras
+      arguments: { location: "main entrance" }
+    - tool: set_camera
+      arguments: { camera_id: "CM001", recording: true }
+
+  composite_4:
+    - tool: manage_access_control
+      arguments:
+        action: "unlock"
+        point_id: "AP001"
+    - tool: manage_access_control
+      arguments:
+        action: "set_access_level"
+        point_id: "AP001"
+        access_level: 1
+    - tool: manage_access_control
+      arguments:
+        action: "unlock"
+        point_id: "AP005"
+    - tool: manage_surveillance_ops
+      arguments:
+        action: "set_camera"
+        camera_id: "CM001"
+        recording: true
+
+  composite_2:
+    - tool: surveillance_control
+      arguments:
+        action: "unlock_access"
+        point_id: "AP001"
+        access_level: 1
+    - tool: surveillance_control
+      arguments:
+        action: "unlock_access"
+        point_id: "AP005"
+    - tool: surveillance_query
+      arguments:
+        action: "cameras"
+        camera_id: "CM001"
+    - tool: surveillance_control
+      arguments:
+        action: "set_camera"
+        camera_id: "CM001"
+        recording: true
+
+  composite_1:
+    - tool: surveillance
+      arguments:
+        action: "unlock_access"
+        point_id: "AP001"
+        access_level: 1
+    - tool: surveillance
+      arguments:
+        action: "unlock_access"
+        point_id: "AP005"
+    - tool: surveillance
+      arguments:
+        action: "cameras"
+        camera_id: "CM001"
+    - tool: surveillance
+      arguments:
+        action: "set_camera"
+        camera_id: "CM001"
+        recording: true
+
+expected_output:
+  contains:
+    - "unlocked"
+    - "Front Door"
+    - "recording"
+  values: {}

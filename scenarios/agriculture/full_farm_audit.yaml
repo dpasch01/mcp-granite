@@ -1,0 +1,113 @@
+id: agriculture-007
+domain: agriculture
+name: Full farm audit
+description: >
+  User requests a comprehensive audit of all fields including sensor readings,
+  crop health, irrigation status, and weather conditions across all zones.
+difficulty: hard
+user_prompt: >
+  I need a full farm audit. Check every field zone's sensors and crops,
+  review all irrigation zones, get weather from all stations, and
+  summarize any issues you find. Also check all pending alerts.
+
+gold_standard:
+  primitive:
+    - tool: list_sensors
+      arguments: {}
+    - tool: list_crops
+      arguments: {}
+    - tool: list_irrigation_zones
+      arguments: {}
+    - tool: get_weather
+      arguments: {}
+    - tool: get_alerts
+      arguments: {}
+    - tool: get_crop
+      arguments: { crop_id: "CR003" }
+    - tool: get_crop
+      arguments: { crop_id: "CR006" }
+    - tool: get_irrigation_zone
+      arguments: { zone_id: "IZ005" }
+    - tool: read_sensor
+      arguments: { sensor_id: "AS001" }
+
+  composite_4:
+    - tool: get_field_overview
+      arguments: { field_zone: "north field" }
+    - tool: get_field_overview
+      arguments: { field_zone: "south field" }
+    - tool: get_field_overview
+      arguments: { field_zone: "east field" }
+    - tool: get_field_overview
+      arguments: { field_zone: "west field" }
+    - tool: get_field_overview
+      arguments: { field_zone: "greenhouse" }
+    - tool: get_field_overview
+      arguments: { field_zone: "orchard" }
+    - tool: handle_farm_alert
+      arguments: { severity: "critical" }
+
+  composite_2:
+    - tool: agriculture_query
+      arguments:
+        action: "field_overview"
+        field_zone: "north field"
+    - tool: agriculture_query
+      arguments:
+        action: "field_overview"
+        field_zone: "south field"
+    - tool: agriculture_query
+      arguments:
+        action: "field_overview"
+        field_zone: "east field"
+    - tool: agriculture_query
+      arguments:
+        action: "field_overview"
+        field_zone: "west field"
+    - tool: agriculture_query
+      arguments:
+        action: "field_overview"
+        field_zone: "greenhouse"
+    - tool: agriculture_query
+      arguments:
+        action: "field_overview"
+        field_zone: "orchard"
+    - tool: agriculture_query
+      arguments:
+        action: "alerts"
+
+  composite_1:
+    - tool: agriculture
+      arguments:
+        action: "field_overview"
+        field_zone: "north field"
+    - tool: agriculture
+      arguments:
+        action: "field_overview"
+        field_zone: "south field"
+    - tool: agriculture
+      arguments:
+        action: "field_overview"
+        field_zone: "east field"
+    - tool: agriculture
+      arguments:
+        action: "field_overview"
+        field_zone: "west field"
+    - tool: agriculture
+      arguments:
+        action: "field_overview"
+        field_zone: "greenhouse"
+    - tool: agriculture
+      arguments:
+        action: "field_overview"
+        field_zone: "orchard"
+    - tool: agriculture
+      arguments:
+        action: "alerts"
+
+expected_output:
+  contains:
+    - "audit"
+    - "sensor"
+    - "irrigation"
+  values: {}

@@ -1,0 +1,151 @@
+id: energy-008
+domain: energy
+name: Grid failure emergency response
+description: >
+  Grid connection fails. User must initiate island mode, start diesel backup,
+  shed non-critical loads, switch batteries to discharge, acknowledge alerts,
+  and create emergency schedule entries.
+difficulty: hard
+user_prompt: >
+  We've lost grid connection! Initiate emergency island mode: disconnect from
+  grid, start the diesel generator at full output, shed all non-critical loads
+  (priority 4+), switch available batteries to discharge mode, acknowledge all
+  related alerts, and schedule a grid reconnection check for tonight.
+
+gold_standard:
+  primitive:
+    - tool: set_power_source
+      arguments: { source_id: "PS005", status: "offline" }
+    - tool: set_power_source
+      arguments: { source_id: "PS004", status: "online", current_output_kw: 200.0 }
+    - tool: list_load_zones
+      arguments: {}
+    - tool: set_load_zone
+      arguments: { zone_id: "LZ003", status: "shed" }
+    - tool: set_load_zone
+      arguments: { zone_id: "LZ005", status: "shed" }
+    - tool: get_battery_status
+      arguments: { battery_id: "BT001" }
+    - tool: get_battery_status
+      arguments: { battery_id: "BT002" }
+    - tool: set_battery
+      arguments: { battery_id: "BT002", status: "discharging" }
+    - tool: get_energy_alerts
+      arguments: {}
+    - tool: create_schedule_entry
+      arguments:
+        name: "Grid Reconnection Check"
+        target_id: "PS005"
+        action: "start"
+        scheduled_time: "2025-06-01T22:00:00"
+        parameters: { check_type: "grid_sync" }
+
+  composite_4:
+    - tool: handle_energy_alert
+      arguments:
+        alert_id: "EA004"
+        acknowledge: true
+        corrective_actions: ["island_mode", "start_diesel", "shed_load", "switch_battery"]
+    - tool: manage_load_schedule
+      arguments:
+        action: "create_schedule"
+        name: "Grid Reconnection Check"
+        target_id: "PS005"
+        operation: "start"
+        scheduled_time: "2025-06-01T22:00:00"
+        parameters: { check_type: "grid_sync" }
+
+  composite_2:
+    - tool: energy_query
+      arguments:
+        action: "grid_overview"
+    - tool: energy_control
+      arguments:
+        action: "set_source"
+        source_id: "PS005"
+        status: "offline"
+    - tool: energy_control
+      arguments:
+        action: "set_source"
+        source_id: "PS004"
+        status: "online"
+        output_kw: 200.0
+    - tool: energy_control
+      arguments:
+        action: "set_load"
+        zone_id: "LZ003"
+        status: "shed"
+    - tool: energy_control
+      arguments:
+        action: "set_load"
+        zone_id: "LZ005"
+        status: "shed"
+    - tool: energy_control
+      arguments:
+        action: "set_battery"
+        battery_id: "BT002"
+        status: "discharging"
+    - tool: energy_control
+      arguments:
+        action: "handle_alert"
+        alert_id: "EA004"
+        acknowledge: true
+    - tool: energy_control
+      arguments:
+        action: "create_schedule"
+        name: "Grid Reconnection Check"
+        target_id: "PS005"
+        operation: "start"
+        scheduled_time: "2025-06-01T22:00:00"
+        parameters: { check_type: "grid_sync" }
+
+  composite_1:
+    - tool: energy
+      arguments:
+        action: "grid_overview"
+    - tool: energy
+      arguments:
+        action: "set_source"
+        source_id: "PS005"
+        status: "offline"
+    - tool: energy
+      arguments:
+        action: "set_source"
+        source_id: "PS004"
+        status: "online"
+        output_kw: 200.0
+    - tool: energy
+      arguments:
+        action: "set_load"
+        zone_id: "LZ003"
+        status: "shed"
+    - tool: energy
+      arguments:
+        action: "set_load"
+        zone_id: "LZ005"
+        status: "shed"
+    - tool: energy
+      arguments:
+        action: "set_battery"
+        battery_id: "BT002"
+        status: "discharging"
+    - tool: energy
+      arguments:
+        action: "handle_alert"
+        alert_id: "EA004"
+        acknowledge: true
+    - tool: energy
+      arguments:
+        action: "create_schedule"
+        name: "Grid Reconnection Check"
+        target_id: "PS005"
+        operation: "start"
+        scheduled_time: "2025-06-01T22:00:00"
+        parameters: { check_type: "grid_sync" }
+
+expected_output:
+  contains:
+    - "island"
+    - "diesel"
+    - "shed"
+  values: {}

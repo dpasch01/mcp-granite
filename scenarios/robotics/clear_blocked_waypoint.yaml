@@ -1,0 +1,87 @@
+id: robotics-006
+domain: robotics
+name: Clear blocked transit corridor
+description: >
+  The Transit Corridor waypoint (WP006) on the warehouse floor is currently blocked
+  (inaccessible). User wants to check the warehouse interlocks, clear the waypoint
+  to make it accessible, and verify the warehouse pressure mat interlock status.
+difficulty: medium
+user_prompt: >
+  The transit corridor on the warehouse floor is blocked. Check the warehouse safety
+  interlocks to see if anything is triggered, then clear the transit corridor waypoint
+  so robots can pass through again. Also reset the warehouse pressure mat interlock
+  back to active.
+
+gold_standard:
+  primitive:
+    - tool: list_interlocks
+      arguments: { workspace: "warehouse_floor" }
+    - tool: list_waypoints
+      arguments: { workspace: "warehouse_floor" }
+    - tool: set_waypoint
+      arguments: { waypoint_id: "WP006", accessible: true }
+    - tool: set_interlock
+      arguments: { interlock_id: "SI004", status: "active" }
+
+  composite_4:
+    - tool: monitor_safety
+      arguments:
+        workspace: "warehouse_floor"
+    - tool: manage_robot_fleet
+      arguments:
+        action: "set_waypoint"
+        waypoint_id: "WP006"
+        accessible: true
+    - tool: manage_robot_fleet
+      arguments:
+        action: "set_interlock"
+        interlock_id: "SI004"
+        status: "active"
+
+  composite_2:
+    - tool: robotics_query
+      arguments:
+        action: "interlocks"
+        workspace: "warehouse_floor"
+    - tool: robotics_query
+      arguments:
+        action: "waypoints"
+        workspace: "warehouse_floor"
+    - tool: robotics_control
+      arguments:
+        action: "set_waypoint"
+        waypoint_id: "WP006"
+        accessible: true
+    - tool: robotics_control
+      arguments:
+        action: "set_interlock"
+        interlock_id: "SI004"
+        status: "active"
+
+  composite_1:
+    - tool: robotics
+      arguments:
+        action: "interlocks"
+        workspace: "warehouse_floor"
+    - tool: robotics
+      arguments:
+        action: "waypoints"
+        workspace: "warehouse_floor"
+    - tool: robotics
+      arguments:
+        action: "set_waypoint"
+        waypoint_id: "WP006"
+        accessible: true
+    - tool: robotics
+      arguments:
+        action: "set_interlock"
+        interlock_id: "SI004"
+        status: "active"
+
+expected_output:
+  contains:
+    - "transit"
+    - "accessible"
+    - "pressure_mat"
+    - "active"
+  values: {}

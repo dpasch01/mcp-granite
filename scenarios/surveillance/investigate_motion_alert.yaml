@@ -1,0 +1,81 @@
+id: surveillance-004
+domain: surveillance
+name: Investigate motion alert
+description: >
+  The north perimeter motion sensor (MS005) has triggered. User wants to
+  check the sensor status, enable recording on the north fence camera,
+  and review related security events.
+difficulty: medium
+user_prompt: >
+  The north perimeter motion sensor just triggered! Check its status,
+  make sure the north fence camera is recording, and show me any
+  recent warning-level security events.
+
+gold_standard:
+  primitive:
+    - tool: list_motion_sensors
+      arguments: { location: "north fence" }
+    - tool: list_cameras
+      arguments: { location: "north fence" }
+    - tool: set_camera
+      arguments: { camera_id: "CM005", recording: true }
+    - tool: get_security_events
+      arguments: { severity: "warning" }
+
+  composite_4:
+    - tool: get_security_overview
+      arguments:
+        location: "north fence"
+    - tool: manage_surveillance_ops
+      arguments:
+        action: "set_camera"
+        camera_id: "CM005"
+        recording: true
+    - tool: handle_security_alert
+      arguments:
+        severity: "warning"
+
+  composite_2:
+    - tool: surveillance_query
+      arguments:
+        action: "motion_sensors"
+        location: "north fence"
+    - tool: surveillance_query
+      arguments:
+        action: "cameras"
+        location: "north fence"
+    - tool: surveillance_control
+      arguments:
+        action: "set_camera"
+        camera_id: "CM005"
+        recording: true
+    - tool: surveillance_query
+      arguments:
+        action: "events"
+        severity: "warning"
+
+  composite_1:
+    - tool: surveillance
+      arguments:
+        action: "motion_sensors"
+        location: "north fence"
+    - tool: surveillance
+      arguments:
+        action: "cameras"
+        location: "north fence"
+    - tool: surveillance
+      arguments:
+        action: "set_camera"
+        camera_id: "CM005"
+        recording: true
+    - tool: surveillance
+      arguments:
+        action: "events"
+        severity: "warning"
+
+expected_output:
+  contains:
+    - "triggered"
+    - "north"
+    - "recording"
+  values: {}

@@ -1,0 +1,81 @@
+id: healthcare-005
+domain: healthcare
+name: Adjust ventilator settings
+description: >
+  Check on the critical patient in room 102 (Bob Martinez), review their
+  vitals, and adjust the ventilator settings based on their condition --
+  increase FiO2 to 0.8 and tidal volume to 550.
+difficulty: medium
+user_prompt: >
+  The critical patient in room 102 needs attention. Check their vitals first,
+  then adjust the ventilator in their room -- increase FiO2 to 0.8 and set
+  tidal volume to 550.
+
+gold_standard:
+  primitive:
+    - tool: get_patient
+      arguments: { patient_id: "PA002" }
+    - tool: get_vitals
+      arguments: { patient_id: "PA002" }
+    - tool: list_devices
+      arguments: { room: "102" }
+    - tool: set_device
+      arguments: { device_id: "MD002", settings: { fio2: 0.8, tidal_volume: 550 } }
+
+  composite_4:
+    - tool: monitor_patient
+      arguments:
+        patient_id: "PA002"
+        include_vitals: true
+        include_devices: true
+    - tool: manage_devices
+      arguments:
+        action: "update"
+        device_id: "MD002"
+        settings: { fio2: 0.8, tidal_volume: 550 }
+
+  composite_2:
+    - tool: healthcare_query
+      arguments:
+        action: "get_patient"
+        patient_id: "PA002"
+    - tool: healthcare_query
+      arguments:
+        action: "get_vitals"
+        patient_id: "PA002"
+    - tool: healthcare_query
+      arguments:
+        action: "list_devices"
+        room: "102"
+    - tool: healthcare_control
+      arguments:
+        action: "set_device"
+        device_id: "MD002"
+        settings: { fio2: 0.8, tidal_volume: 550 }
+
+  composite_1:
+    - tool: healthcare
+      arguments:
+        action: "get_patient"
+        patient_id: "PA002"
+    - tool: healthcare
+      arguments:
+        action: "get_vitals"
+        patient_id: "PA002"
+    - tool: healthcare
+      arguments:
+        action: "list_devices"
+        room: "102"
+    - tool: healthcare
+      arguments:
+        action: "set_device"
+        device_id: "MD002"
+        settings: { fio2: 0.8, tidal_volume: 550 }
+
+expected_output:
+  contains:
+    - "Bob Martinez"
+    - "critical"
+    - "ventilator"
+    - "fio2"
+  values: {}

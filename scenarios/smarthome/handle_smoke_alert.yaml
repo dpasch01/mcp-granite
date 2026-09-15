@@ -1,0 +1,59 @@
+id: smarthome-002
+domain: smarthome
+name: Handle smoke detector alert
+description: >
+  The basement smoke detector has triggered. User wants to check the
+  sensor reading, turn on all lights in the house, and unlock the front door
+  as a safety precaution.
+difficulty: medium
+user_prompt: >
+  The smoke detector in the basement just triggered an alert!
+  Check the smoke sensor reading, turn on all the lights in the house,
+  and unlock the front door so we can evacuate safely.
+
+gold_standard:
+  primitive:
+    - tool: read_sensor
+      arguments: { sensor_id: "SN006" }
+    - tool: list_devices
+      arguments: {}
+    - tool: set_device
+      arguments: { device_id: "DV001", settings: { status: "on", brightness: 100 } }
+    - tool: set_device
+      arguments: { device_id: "DV005", settings: { status: "on" } }
+    - tool: set_device
+      arguments: { device_id: "DV003", settings: { locked: false } }
+    - tool: get_event_log
+      arguments: { severity: "critical" }
+
+  composite_4:
+    - tool: handle_alert
+      arguments:
+        sensor_id: "SN006"
+        actions:
+          - "lights_on"
+          - "unlock_doors"
+
+  composite_2:
+    - tool: smart_home_control
+      arguments:
+        action: "handle_alert"
+        sensor_id: "SN006"
+        alert_actions:
+          - "lights_on"
+          - "unlock_doors"
+
+  composite_1:
+    - tool: smart_home
+      arguments:
+        action: "handle_alert"
+        sensor_id: "SN006"
+        alert_actions:
+          - "lights_on"
+          - "unlock_doors"
+
+expected_output:
+  contains:
+    - "smoke"
+    - "unlock"
+  values: {}

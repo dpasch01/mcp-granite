@@ -1,0 +1,26 @@
+id: warehouse-002
+domain: warehouse
+name: Check robot battery levels
+description: >
+  User wants to see which robots have low battery.
+difficulty: easy
+user_prompt: >
+  Which robots are running low on battery or currently charging?
+
+gold_standard:
+  primitive:
+    - tool: list_robots
+      arguments: {}
+  composite_4:
+    - tool: manage_equipment
+      arguments: { action: "robot_status" }
+  composite_2:
+    - tool: warehouse_query
+      arguments: { action: "robot_status" }
+  composite_1:
+    - tool: warehouse
+      arguments: { action: "robot_status" }
+
+expected_output:
+  contains: ["robot", "battery"]
+  values: {}

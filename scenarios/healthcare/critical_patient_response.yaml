@@ -1,0 +1,106 @@
+id: healthcare-008
+domain: healthcare
+name: Critical patient response
+description: >
+  Respond to a critical patient situation in room 102 (Bob Martinez). Check
+  their vitals and devices, create an emergency nurse call, adjust the
+  ventilator to increase oxygen delivery (FiO2 to 1.0), and update the
+  patient's condition status.
+difficulty: hard
+user_prompt: >
+  Room 102 critical alert! Check the patient's vitals and devices immediately.
+  Create an emergency nurse call for room 102, increase the ventilator FiO2
+  to 1.0 for maximum oxygen, and make sure the patient is flagged as critical.
+
+gold_standard:
+  primitive:
+    - tool: get_patient
+      arguments: { patient_id: "PA002" }
+    - tool: get_vitals
+      arguments: { patient_id: "PA002" }
+    - tool: list_devices
+      arguments: { room: "102" }
+    - tool: create_nurse_call
+      arguments: { room: "102", bed: "A", patient_id: "PA002", call_type: "emergency" }
+    - tool: set_device
+      arguments: { device_id: "MD002", settings: { fio2: 1.0 } }
+
+  composite_4:
+    - tool: monitor_patient
+      arguments:
+        patient_id: "PA002"
+        include_vitals: true
+        include_devices: true
+    - tool: handle_nurse_call
+      arguments:
+        action: "create"
+        room: "102"
+        bed: "A"
+        patient_id: "PA002"
+        call_type: "emergency"
+    - tool: manage_devices
+      arguments:
+        action: "update"
+        device_id: "MD002"
+        settings: { fio2: 1.0 }
+
+  composite_2:
+    - tool: healthcare_query
+      arguments:
+        action: "get_patient"
+        patient_id: "PA002"
+    - tool: healthcare_query
+      arguments:
+        action: "get_vitals"
+        patient_id: "PA002"
+    - tool: healthcare_query
+      arguments:
+        action: "list_devices"
+        room: "102"
+    - tool: healthcare_control
+      arguments:
+        action: "create_nurse_call"
+        room: "102"
+        bed: "A"
+        patient_id: "PA002"
+        call_type: "emergency"
+    - tool: healthcare_control
+      arguments:
+        action: "set_device"
+        device_id: "MD002"
+        settings: { fio2: 1.0 }
+
+  composite_1:
+    - tool: healthcare
+      arguments:
+        action: "get_patient"
+        patient_id: "PA002"
+    - tool: healthcare
+      arguments:
+        action: "get_vitals"
+        patient_id: "PA002"
+    - tool: healthcare
+      arguments:
+        action: "list_devices"
+        room: "102"
+    - tool: healthcare
+      arguments:
+        action: "create_nurse_call"
+        room: "102"
+        bed: "A"
+        patient_id: "PA002"
+        call_type: "emergency"
+    - tool: healthcare
+      arguments:
+        action: "set_device"
+        device_id: "MD002"
+        settings: { fio2: 1.0 }
+
+expected_output:
+  contains:
+    - "Bob Martinez"
+    - "critical"
+    - "emergency"
+    - "ventilator"
+    - "fio2"
+  values: {}

@@ -1,0 +1,57 @@
+id: healthcare-004
+domain: healthcare
+name: Respond to nurse call
+description: >
+  Check active nurse calls in the ward, acknowledge the emergency call in
+  room 102, and dispatch Nurse Thompson to respond.
+difficulty: medium
+user_prompt: >
+  There are active nurse calls. Check what calls are pending, then acknowledge
+  the emergency call in room 102 and assign Nurse Thompson to handle it.
+
+gold_standard:
+  primitive:
+    - tool: list_nurse_calls
+      arguments: { status: "active" }
+    - tool: acknowledge_nurse_call
+      arguments: { call_id: "NC001", nurse: "Nurse Thompson" }
+
+  composite_4:
+    - tool: handle_nurse_call
+      arguments:
+        action: "list"
+        status_filter: "active"
+    - tool: handle_nurse_call
+      arguments:
+        action: "acknowledge"
+        call_id: "NC001"
+        nurse: "Nurse Thompson"
+
+  composite_2:
+    - tool: healthcare_query
+      arguments:
+        action: "list_nurse_calls"
+        call_status: "active"
+    - tool: healthcare_control
+      arguments:
+        action: "acknowledge_nurse_call"
+        call_id: "NC001"
+        nurse: "Nurse Thompson"
+
+  composite_1:
+    - tool: healthcare
+      arguments:
+        action: "list_nurse_calls"
+        call_status: "active"
+    - tool: healthcare
+      arguments:
+        action: "acknowledge_nurse_call"
+        call_id: "NC001"
+        nurse: "Nurse Thompson"
+
+expected_output:
+  contains:
+    - "emergency"
+    - "acknowledged"
+    - "Nurse Thompson"
+  values: {}

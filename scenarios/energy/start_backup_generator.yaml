@@ -1,0 +1,61 @@
+id: energy-006
+domain: energy
+name: Start backup diesel generator
+description: >
+  User wants to bring the diesel generator online to supplement solar
+  during a cloudy period. Check current generation, start diesel, and verify.
+difficulty: medium
+user_prompt: >
+  Cloud cover is reducing solar output. Check current generation levels,
+  bring the diesel generator online at 100kW, and verify the grid
+  balance afterwards.
+
+gold_standard:
+  primitive:
+    - tool: list_power_sources
+      arguments: {}
+    - tool: get_power_source
+      arguments: { source_id: "PS004" }
+    - tool: set_power_source
+      arguments: { source_id: "PS004", status: "online", current_output_kw: 100.0 }
+    - tool: list_load_zones
+      arguments: {}
+
+  composite_4:
+    - tool: get_grid_overview
+      arguments: {}
+    - tool: manage_power
+      arguments:
+        action: "set_source"
+        source_id: "PS004"
+        status: "online"
+        output_kw: 100.0
+
+  composite_2:
+    - tool: energy_query
+      arguments:
+        action: "grid_overview"
+    - tool: energy_control
+      arguments:
+        action: "set_source"
+        source_id: "PS004"
+        status: "online"
+        output_kw: 100.0
+
+  composite_1:
+    - tool: energy
+      arguments:
+        action: "grid_overview"
+    - tool: energy
+      arguments:
+        action: "set_source"
+        source_id: "PS004"
+        status: "online"
+        output_kw: 100.0
+
+expected_output:
+  contains:
+    - "diesel"
+    - "generator"
+    - "online"
+  values: {}

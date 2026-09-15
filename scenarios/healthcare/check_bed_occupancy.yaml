@@ -1,0 +1,35 @@
+id: healthcare-003
+domain: healthcare
+name: Check bed occupancy
+description: >
+  Check which beds are currently occupied across the ward using bed sensor
+  data to get an occupancy overview.
+difficulty: easy
+user_prompt: >
+  Which beds are currently occupied in the ward? Check the bed sensors.
+
+gold_standard:
+  primitive:
+    - tool: get_bed_sensor
+      arguments: {}
+
+  composite_4:
+    - tool: get_ward_overview
+      arguments: {}
+
+  composite_2:
+    - tool: healthcare_query
+      arguments:
+        action: "get_bed_sensor"
+
+  composite_1:
+    - tool: healthcare
+      arguments:
+        action: "get_bed_sensor"
+
+expected_output:
+  contains:
+    - "occupied"
+    - "101"
+    - "weight_kg"
+  values: {}

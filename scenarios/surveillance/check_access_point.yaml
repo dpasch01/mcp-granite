@@ -1,0 +1,38 @@
+id: surveillance-003
+domain: surveillance
+name: Check front door access point
+description: >
+  User wants to check the current status of the front door access point,
+  including whether it is locked and its access level.
+difficulty: easy
+user_prompt: >
+  What is the status of the front door access point? Is it locked?
+
+gold_standard:
+  primitive:
+    - tool: get_access_point
+      arguments: { point_id: "AP001" }
+
+  composite_4:
+    - tool: manage_access_control
+      arguments:
+        action: "list_access"
+        location: "main entrance"
+
+  composite_2:
+    - tool: surveillance_query
+      arguments:
+        action: "access_points"
+        point_id: "AP001"
+
+  composite_1:
+    - tool: surveillance
+      arguments:
+        action: "access_points"
+        point_id: "AP001"
+
+expected_output:
+  contains:
+    - "Front Door"
+    - "locked"
+  values: {}

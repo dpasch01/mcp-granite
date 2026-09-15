@@ -1,0 +1,36 @@
+id: agriculture-002
+domain: agriculture
+name: Get weather forecast
+description: >
+  User wants to check the current weather conditions and forecast from the main station.
+difficulty: easy
+user_prompt: >
+  What's the current weather forecast from the main weather station?
+
+gold_standard:
+  primitive:
+    - tool: get_weather
+      arguments: { station_id: "WS001" }
+
+  composite_4:
+    - tool: get_field_overview
+      arguments:
+        field_zone: "north field"
+
+  composite_2:
+    - tool: agriculture_query
+      arguments:
+        action: "weather"
+        station_id: "WS001"
+
+  composite_1:
+    - tool: agriculture
+      arguments:
+        action: "weather"
+        station_id: "WS001"
+
+expected_output:
+  contains:
+    - "weather"
+    - "forecast"
+  values: {}

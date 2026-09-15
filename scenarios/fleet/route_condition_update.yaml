@@ -1,0 +1,49 @@
+id: fleet-006
+domain: fleet
+name: Route condition update
+description: >
+  Bad weather is affecting routes. User needs to check current route
+  conditions for active deliveries, update conditions, and check
+  if any deliveries need attention.
+difficulty: medium
+user_prompt: >
+  There's a storm coming. Check the route conditions for delivery DL001
+  (Warehouse A to Customer Zone A). Update the route conditions to show
+  heavy traffic and rain. Then check if the delivery is still on track.
+
+gold_standard:
+  primitive:
+    - tool: get_delivery_status
+      arguments: { delivery_id: "DL001" }
+    - tool: get_route_info
+      arguments: { origin: "Warehouse A", destination: "Customer Zone A" }
+    - tool: update_route_conditions
+      arguments:
+        origin: "Warehouse A"
+        destination: "Customer Zone A"
+        conditions: { traffic: "heavy", weather: "rain" }
+    - tool: get_vehicle_status
+      arguments: { vehicle_id: "VH002" }
+
+  composite_4:
+    - tool: get_delivery_summary
+      arguments:
+        delivery_id: "DL001"
+
+  composite_2:
+    - tool: fleet_query
+      arguments:
+        action: "delivery_summary"
+        delivery_id: "DL001"
+
+  composite_1:
+    - tool: fleet
+      arguments:
+        action: "delivery_summary"
+        delivery_id: "DL001"
+
+expected_output:
+  contains:
+    - "DL001"
+    - "route"
+  values: {}

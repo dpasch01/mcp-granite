@@ -1,0 +1,133 @@
+id: agriculture-009
+domain: agriculture
+name: Seasonal transition planning
+description: >
+  User wants to plan the transition from current growing season. Must audit
+  all crops and their growth stages, check which are harvest-ready, review
+  irrigation needs, schedule drone surveys for crop assessment, check weather
+  forecasts, and update crop statuses.
+difficulty: hard
+user_prompt: >
+  We need to plan for the seasonal transition. Review all crops and their
+  growth stages, identify which fields need irrigation adjustments for
+  the upcoming harvest period, schedule drone surveys over each field
+  for a final crop assessment, check weather forecasts, and update
+  any crops that are ready for harvest.
+
+gold_standard:
+  primitive:
+    - tool: list_crops
+      arguments: {}
+    - tool: get_crop
+      arguments: { crop_id: "CR001" }
+    - tool: get_crop
+      arguments: { crop_id: "CR002" }
+    - tool: get_crop
+      arguments: { crop_id: "CR003" }
+    - tool: get_crop
+      arguments: { crop_id: "CR004" }
+    - tool: get_crop
+      arguments: { crop_id: "CR005" }
+    - tool: get_crop
+      arguments: { crop_id: "CR006" }
+    - tool: list_irrigation_zones
+      arguments: {}
+    - tool: get_weather
+      arguments: {}
+    - tool: schedule_drone_task
+      arguments:
+        drone_id: "DRONE-A"
+        task_type: "survey"
+        field_zone: "north field"
+        scheduled_time: "2025-06-02T06:00:00"
+    - tool: schedule_drone_task
+      arguments:
+        drone_id: "DRONE-A"
+        task_type: "survey"
+        field_zone: "south field"
+        scheduled_time: "2025-06-02T08:00:00"
+
+  composite_4:
+    - tool: get_field_overview
+      arguments: { field_zone: "north field" }
+    - tool: get_field_overview
+      arguments: { field_zone: "south field" }
+    - tool: get_field_overview
+      arguments: { field_zone: "east field" }
+    - tool: get_field_overview
+      arguments: { field_zone: "greenhouse" }
+    - tool: get_field_overview
+      arguments: { field_zone: "orchard" }
+    - tool: get_field_overview
+      arguments: { field_zone: "west field" }
+    - tool: schedule_farm_operation
+      arguments:
+        operation: "schedule_drone"
+        drone_id: "DRONE-A"
+        task_type: "survey"
+        field_zone: "north field"
+        scheduled_time: "2025-06-02T06:00:00"
+    - tool: schedule_farm_operation
+      arguments:
+        operation: "schedule_drone"
+        drone_id: "DRONE-A"
+        task_type: "survey"
+        field_zone: "south field"
+        scheduled_time: "2025-06-02T08:00:00"
+
+  composite_2:
+    - tool: agriculture_query
+      arguments:
+        action: "crop_status"
+    - tool: agriculture_query
+      arguments:
+        action: "irrigation_status"
+    - tool: agriculture_query
+      arguments:
+        action: "weather"
+    - tool: agriculture_control
+      arguments:
+        action: "schedule_drone"
+        drone_id: "DRONE-A"
+        task_type: "survey"
+        field_zone: "north field"
+        scheduled_time: "2025-06-02T06:00:00"
+    - tool: agriculture_control
+      arguments:
+        action: "schedule_drone"
+        drone_id: "DRONE-A"
+        task_type: "survey"
+        field_zone: "south field"
+        scheduled_time: "2025-06-02T08:00:00"
+
+  composite_1:
+    - tool: agriculture
+      arguments:
+        action: "crop_status"
+    - tool: agriculture
+      arguments:
+        action: "irrigation_status"
+    - tool: agriculture
+      arguments:
+        action: "weather"
+    - tool: agriculture
+      arguments:
+        action: "schedule_drone"
+        drone_id: "DRONE-A"
+        task_type: "survey"
+        field_zone: "north field"
+        scheduled_time: "2025-06-02T06:00:00"
+    - tool: agriculture
+      arguments:
+        action: "schedule_drone"
+        drone_id: "DRONE-A"
+        task_type: "survey"
+        field_zone: "south field"
+        scheduled_time: "2025-06-02T08:00:00"
+
+expected_output:
+  contains:
+    - "crop"
+    - "harvest"
+    - "survey"
+  values: {}

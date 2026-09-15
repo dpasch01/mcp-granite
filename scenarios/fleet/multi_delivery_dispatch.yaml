@@ -1,0 +1,66 @@
+id: fleet-005
+domain: fleet
+name: Multi-delivery dispatch
+description: >
+  Two pending deliveries (DL003 and DL004) need to be dispatched.
+  User wants to find vehicles and drivers for both, check routes, and
+  dispatch them.
+difficulty: medium
+user_prompt: >
+  We have two pending deliveries — DL003 and DL004. Dispatch both of them.
+  Find available vehicles and drivers for each, check the routes, and
+  get them on their way.
+
+gold_standard:
+  primitive:
+    - tool: list_vehicles
+      arguments: { status_filter: "available" }
+    - tool: list_drivers
+      arguments: { status_filter: "available" }
+    - tool: get_route_info
+      arguments: { origin: "Warehouse A", destination: "Customer Zone B" }
+    - tool: assign_delivery
+      arguments: { delivery_id: "DL003", vehicle_id: "VH001", driver_id: "DR001" }
+    - tool: update_delivery_status
+      arguments: { delivery_id: "DL003", status: "in_transit" }
+    - tool: get_route_info
+      arguments: { origin: "Warehouse B", destination: "Customer Zone C" }
+    - tool: assign_delivery
+      arguments: { delivery_id: "DL004", vehicle_id: "VH003", driver_id: "DR003" }
+    - tool: update_delivery_status
+      arguments: { delivery_id: "DL004", status: "in_transit" }
+
+  composite_4:
+    - tool: dispatch_delivery
+      arguments:
+        delivery_id: "DL003"
+    - tool: dispatch_delivery
+      arguments:
+        delivery_id: "DL004"
+
+  composite_2:
+    - tool: fleet_action
+      arguments:
+        action: "dispatch"
+        delivery_id: "DL003"
+    - tool: fleet_action
+      arguments:
+        action: "dispatch"
+        delivery_id: "DL004"
+
+  composite_1:
+    - tool: fleet
+      arguments:
+        action: "dispatch"
+        delivery_id: "DL003"
+    - tool: fleet
+      arguments:
+        action: "dispatch"
+        delivery_id: "DL004"
+
+expected_output:
+  contains:
+    - "DL003"
+    - "DL004"
+    - "dispatch"
+  values: {}

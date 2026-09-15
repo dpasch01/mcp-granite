@@ -1,0 +1,37 @@
+id: energy-001
+domain: energy
+name: Check solar output
+description: >
+  User wants to check the current output of the main solar array.
+difficulty: easy
+user_prompt: >
+  What is the current power output of Solar Array A?
+
+gold_standard:
+  primitive:
+    - tool: get_power_source
+      arguments: { source_id: "PS001" }
+
+  composite_4:
+    - tool: manage_power
+      arguments:
+        action: "source_status"
+        source_id: "PS001"
+
+  composite_2:
+    - tool: energy_query
+      arguments:
+        action: "source_status"
+        source_id: "PS001"
+
+  composite_1:
+    - tool: energy
+      arguments:
+        action: "source_status"
+        source_id: "PS001"
+
+expected_output:
+  contains:
+    - "solar"
+    - "output"
+  values: {}

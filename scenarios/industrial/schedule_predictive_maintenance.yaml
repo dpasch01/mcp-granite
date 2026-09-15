@@ -1,0 +1,62 @@
+id: industrial-003
+domain: industrial
+name: Schedule predictive maintenance for welding robot
+description: >
+  The welding robot MC004 has elevated vibration readings above its threshold.
+  User wants to review its maintenance history and schedule predictive
+  maintenance before it becomes a critical issue.
+difficulty: medium
+user_prompt: >
+  The welding robot MC004 has high vibration readings. Check its current
+  telemetry against the thresholds, review its maintenance history,
+  and schedule predictive maintenance with medium priority. Assign it
+  to the Maintenance Team.
+
+gold_standard:
+  primitive:
+    - tool: read_telemetry
+      arguments: { machine_id: "MC004" }
+    - tool: get_alert_thresholds
+      arguments: { machine_id: "MC004" }
+    - tool: get_maintenance_history
+      arguments: { machine_id: "MC004" }
+    - tool: create_work_order
+      arguments:
+        machine_id: "MC004"
+        priority: "medium"
+        description: "Predictive maintenance - elevated vibration readings"
+    - tool: update_work_order
+      arguments:
+        order_id: "WO002"
+        status: "in_progress"
+        assigned_to: "Maintenance Team"
+
+  composite_4:
+    - tool: schedule_maintenance
+      arguments:
+        machine_id: "MC004"
+        reason: "high_vibration"
+        priority: "medium"
+
+  composite_2:
+    - tool: industrial_action
+      arguments:
+        action: "schedule_maintenance"
+        machine_id: "MC004"
+        reason: "high_vibration"
+        priority: "medium"
+
+  composite_1:
+    - tool: industrial
+      arguments:
+        action: "schedule_maintenance"
+        machine_id: "MC004"
+        reason: "high_vibration"
+        priority: "medium"
+
+expected_output:
+  contains:
+    - "MC004"
+    - "maintenance"
+    - "vibration"
+  values: {}

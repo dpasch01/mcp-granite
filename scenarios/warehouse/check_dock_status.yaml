@@ -1,0 +1,30 @@
+id: warehouse-003
+domain: warehouse
+name: Check dock door status
+description: >
+  User wants to see the current status of all dock doors.
+difficulty: easy
+user_prompt: >
+  Show me the status of all dock doors — which ones are active?
+
+gold_standard:
+  primitive:
+    - tool: get_dock_door
+      arguments: { door_id: "DD001" }
+    - tool: get_dock_door
+      arguments: { door_id: "DD002" }
+    - tool: get_dock_door
+      arguments: { door_id: "DD003" }
+  composite_4:
+    - tool: manage_equipment
+      arguments: { action: "dock_status" }
+  composite_2:
+    - tool: warehouse_query
+      arguments: { action: "dock_status" }
+  composite_1:
+    - tool: warehouse
+      arguments: { action: "dock_status" }
+
+expected_output:
+  contains: ["dock", "loading"]
+  values: {}

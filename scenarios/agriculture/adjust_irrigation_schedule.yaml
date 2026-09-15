@@ -1,0 +1,71 @@
+id: agriculture-004
+domain: agriculture
+name: Adjust irrigation schedule
+description: >
+  User wants to check the south field irrigation status and increase the
+  flow rate, then verify the weather conditions to decide if it's appropriate.
+difficulty: medium
+user_prompt: >
+  The south field sprinkler seems to have low flow. Check its current status,
+  increase the flow rate to 30 liters per minute, and check the weather
+  to make sure it's not going to rain.
+
+gold_standard:
+  primitive:
+    - tool: get_irrigation_zone
+      arguments: { zone_id: "IZ002" }
+    - tool: set_irrigation_zone
+      arguments: { zone_id: "IZ002", flow_rate: 30.0 }
+    - tool: get_weather
+      arguments: { station_id: "WS001" }
+    - tool: get_weather
+      arguments: { station_id: "WS003" }
+
+  composite_4:
+    - tool: manage_irrigation
+      arguments:
+        action: "status"
+        zone_id: "IZ002"
+    - tool: manage_irrigation
+      arguments:
+        action: "adjust"
+        zone_id: "IZ002"
+        flow_rate: 30.0
+    - tool: get_field_overview
+      arguments:
+        field_zone: "south field"
+
+  composite_2:
+    - tool: agriculture_query
+      arguments:
+        action: "irrigation_status"
+        zone_id: "IZ002"
+    - tool: agriculture_control
+      arguments:
+        action: "set_irrigation"
+        zone_id: "IZ002"
+        flow_rate: 30.0
+    - tool: agriculture_query
+      arguments:
+        action: "weather"
+
+  composite_1:
+    - tool: agriculture
+      arguments:
+        action: "irrigation_status"
+        zone_id: "IZ002"
+    - tool: agriculture
+      arguments:
+        action: "set_irrigation"
+        zone_id: "IZ002"
+        flow_rate: 30.0
+    - tool: agriculture
+      arguments:
+        action: "weather"
+
+expected_output:
+  contains:
+    - "irrigation"
+    - "flow"
+    - "weather"
+  values: {}

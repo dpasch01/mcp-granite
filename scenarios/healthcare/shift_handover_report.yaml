@@ -1,0 +1,63 @@
+id: healthcare-009
+domain: healthcare
+name: Shift handover report
+description: >
+  Generate a comprehensive shift handover report: review all patients and
+  their conditions, check for active nurse calls, verify all medical device
+  statuses, review bed sensor data, and check environment readings. This
+  covers everything the incoming shift needs to know.
+difficulty: hard
+user_prompt: >
+  I need a full shift handover report. List all patients with their conditions,
+  check for any active or acknowledged nurse calls, verify the status of all
+  medical devices (flag any faults), check all bed sensors, and review the
+  environment readings across all rooms.
+
+gold_standard:
+  primitive:
+    - tool: list_patients
+      arguments: {}
+    - tool: get_vitals
+      arguments: {}
+    - tool: list_nurse_calls
+      arguments: {}
+    - tool: list_devices
+      arguments: {}
+    - tool: get_bed_sensor
+      arguments: {}
+    - tool: list_environment
+      arguments: {}
+
+  composite_4:
+    - tool: get_ward_overview
+      arguments: {}
+    - tool: handle_nurse_call
+      arguments:
+        action: "list"
+
+  composite_2:
+    - tool: healthcare_query
+      arguments:
+        action: "ward_overview"
+    - tool: healthcare_query
+      arguments:
+        action: "list_nurse_calls"
+
+  composite_1:
+    - tool: healthcare
+      arguments:
+        action: "ward_overview"
+    - tool: healthcare
+      arguments:
+        action: "list_nurse_calls"
+
+expected_output:
+  contains:
+    - "Alice Johnson"
+    - "Bob Martinez"
+    - "critical"
+    - "fault"
+    - "emergency"
+    - "active"
+    - "occupied"
+  values: {}

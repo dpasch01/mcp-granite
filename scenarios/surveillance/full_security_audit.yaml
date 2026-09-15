@@ -1,0 +1,102 @@
+id: surveillance-007
+domain: surveillance
+name: Full security audit
+description: >
+  User requests a complete security audit: check all cameras, review all
+  motion sensors, list all access points and their lock status, check all
+  alarm zones, review recent events, and check patrol status.
+difficulty: hard
+user_prompt: >
+  Perform a full security audit. I need to see the status of all cameras,
+  all motion sensors and their battery levels, all access points and whether
+  they're locked, all alarm zones, recent security events, and the current
+  patrol schedule. Give me a complete picture.
+
+gold_standard:
+  primitive:
+    - tool: list_cameras
+      arguments: {}
+    - tool: list_motion_sensors
+      arguments: {}
+    - tool: get_access_point
+      arguments: { point_id: "AP001" }
+    - tool: get_access_point
+      arguments: { point_id: "AP002" }
+    - tool: get_access_point
+      arguments: { point_id: "AP003" }
+    - tool: get_access_point
+      arguments: { point_id: "AP004" }
+    - tool: get_access_point
+      arguments: { point_id: "AP005" }
+    - tool: get_access_point
+      arguments: { point_id: "AP006" }
+    - tool: get_alarm_zone
+      arguments: { zone_id: "AZ001" }
+    - tool: get_alarm_zone
+      arguments: { zone_id: "AZ002" }
+    - tool: get_alarm_zone
+      arguments: { zone_id: "AZ003" }
+    - tool: get_alarm_zone
+      arguments: { zone_id: "AZ004" }
+    - tool: get_security_events
+      arguments: {}
+    - tool: manage_patrol
+      arguments: { action: "list" }
+
+  composite_4:
+    - tool: get_security_overview
+      arguments: {}
+    - tool: manage_access_control
+      arguments:
+        action: "list_access"
+    - tool: manage_access_control
+      arguments:
+        action: "list_zones"
+    - tool: handle_security_alert
+      arguments: {}
+    - tool: manage_surveillance_ops
+      arguments:
+        action: "list_patrols"
+
+  composite_2:
+    - tool: surveillance_query
+      arguments:
+        action: "security_overview"
+    - tool: surveillance_query
+      arguments:
+        action: "access_points"
+    - tool: surveillance_query
+      arguments:
+        action: "alarm_zones"
+    - tool: surveillance_query
+      arguments:
+        action: "events"
+    - tool: surveillance_query
+      arguments:
+        action: "patrols"
+
+  composite_1:
+    - tool: surveillance
+      arguments:
+        action: "security_overview"
+    - tool: surveillance
+      arguments:
+        action: "access_points"
+    - tool: surveillance
+      arguments:
+        action: "alarm_zones"
+    - tool: surveillance
+      arguments:
+        action: "events"
+    - tool: surveillance
+      arguments:
+        action: "patrols"
+
+expected_output:
+  contains:
+    - "camera"
+    - "sensor"
+    - "access"
+    - "zone"
+    - "patrol"
+  values: {}

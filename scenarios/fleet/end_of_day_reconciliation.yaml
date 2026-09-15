@@ -1,0 +1,109 @@
+id: fleet-008
+domain: fleet
+name: End-of-day reconciliation
+description: >
+  End-of-day fleet reconciliation. Check status of all active deliveries,
+  verify vehicle locations, check driver availability, and compile
+  a summary of the day's operations.
+difficulty: hard
+user_prompt: >
+  It's end of day. Do a full reconciliation. Check the status of all
+  deliveries (DL001 through DL005), check where all vehicles are, verify
+  all driver statuses, and give me a complete summary of today's fleet
+  operations including what's still pending.
+
+gold_standard:
+  primitive:
+    - tool: list_vehicles
+      arguments: {}
+    - tool: list_drivers
+      arguments: {}
+    - tool: get_delivery_status
+      arguments: { delivery_id: "DL001" }
+    - tool: get_delivery_status
+      arguments: { delivery_id: "DL002" }
+    - tool: get_delivery_status
+      arguments: { delivery_id: "DL003" }
+    - tool: get_delivery_status
+      arguments: { delivery_id: "DL004" }
+    - tool: get_delivery_status
+      arguments: { delivery_id: "DL005" }
+    - tool: get_vehicle_status
+      arguments: { vehicle_id: "VH001" }
+    - tool: get_vehicle_status
+      arguments: { vehicle_id: "VH002" }
+    - tool: get_driver_info
+      arguments: { driver_id: "DR001" }
+    - tool: get_driver_info
+      arguments: { driver_id: "DR002" }
+
+  composite_4:
+    - tool: get_fleet_overview
+      arguments: {}
+    - tool: get_delivery_summary
+      arguments: { delivery_id: "DL001" }
+    - tool: get_delivery_summary
+      arguments: { delivery_id: "DL002" }
+    - tool: get_delivery_summary
+      arguments: { delivery_id: "DL003" }
+    - tool: get_delivery_summary
+      arguments: { delivery_id: "DL004" }
+    - tool: get_delivery_summary
+      arguments: { delivery_id: "DL005" }
+
+  composite_2:
+    - tool: fleet_query
+      arguments:
+        action: "fleet_overview"
+    - tool: fleet_query
+      arguments:
+        action: "delivery_summary"
+        delivery_id: "DL001"
+    - tool: fleet_query
+      arguments:
+        action: "delivery_summary"
+        delivery_id: "DL002"
+    - tool: fleet_query
+      arguments:
+        action: "delivery_summary"
+        delivery_id: "DL003"
+    - tool: fleet_query
+      arguments:
+        action: "delivery_summary"
+        delivery_id: "DL004"
+    - tool: fleet_query
+      arguments:
+        action: "delivery_summary"
+        delivery_id: "DL005"
+
+  composite_1:
+    - tool: fleet
+      arguments:
+        action: "fleet_overview"
+    - tool: fleet
+      arguments:
+        action: "delivery_summary"
+        delivery_id: "DL001"
+    - tool: fleet
+      arguments:
+        action: "delivery_summary"
+        delivery_id: "DL002"
+    - tool: fleet
+      arguments:
+        action: "delivery_summary"
+        delivery_id: "DL003"
+    - tool: fleet
+      arguments:
+        action: "delivery_summary"
+        delivery_id: "DL004"
+    - tool: fleet
+      arguments:
+        action: "delivery_summary"
+        delivery_id: "DL005"
+
+expected_output:
+  contains:
+    - "DL001"
+    - "delivered"
+    - "pending"
+  values: {}

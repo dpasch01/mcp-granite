@@ -1,0 +1,64 @@
+id: robotics-004
+domain: robotics
+name: Assign weld task to idle arm
+description: >
+  The weld task (TQ002) is queued on the assembly line. User wants to assign it to
+  Assembly Arm B (RB002) which is currently idle, updating both the task and the robot.
+difficulty: medium
+user_prompt: >
+  I see there's a weld task queued on the assembly line. Assign it to Assembly Arm B
+  since it's idle. Update the task assignment and mark the robot as active with that task.
+
+gold_standard:
+  primitive:
+    - tool: list_robots
+      arguments: { workspace: "assembly_line", status: "idle" }
+    - tool: manage_task
+      arguments: { action: "get", task_id: "TQ002" }
+    - tool: manage_task
+      arguments: { action: "update", task_id: "TQ002", assigned_robot: "RB002", status: "assigned" }
+    - tool: set_robot
+      arguments: { robot_id: "RB002", status: "active", current_task: "TQ002" }
+
+  composite_4:
+    - tool: manage_robot_fleet
+      arguments:
+        action: "robot_status"
+        workspace: "assembly_line"
+        status: "idle"
+    - tool: handle_robot_task
+      arguments:
+        action: "assign"
+        task_id: "TQ002"
+        assigned_robot: "RB002"
+
+  composite_2:
+    - tool: robotics_query
+      arguments:
+        action: "robot_status"
+        workspace: "assembly_line"
+        status: "idle"
+    - tool: robotics_control
+      arguments:
+        action: "assign_task"
+        task_id: "TQ002"
+        assigned_robot: "RB002"
+
+  composite_1:
+    - tool: robotics
+      arguments:
+        action: "robot_status"
+        workspace: "assembly_line"
+        status: "idle"
+    - tool: robotics
+      arguments:
+        action: "assign_task"
+        task_id: "TQ002"
+        assigned_robot: "RB002"
+
+expected_output:
+  contains:
+    - "RB002"
+    - "TQ002"
+    - "assigned"
+  values: {}

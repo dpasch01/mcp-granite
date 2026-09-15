@@ -1,0 +1,48 @@
+id: smarthome-005
+domain: smarthome
+name: Enable backyard camera recording
+description: >
+  User wants to check the backyard camera status and make sure recording and night vision are enabled.
+difficulty: easy
+user_prompt: >
+  Check the status of the backyard camera. Make sure recording is enabled and night vision is on.
+
+gold_standard:
+  primitive:
+    - tool: get_device_status
+      arguments: { device_id: "DV004" }
+    - tool: set_device
+      arguments: { device_id: "DV004", settings: { recording: true, night_vision: true } }
+
+  composite_4:
+    - tool: get_room_status
+      arguments:
+        location: "backyard"
+
+  composite_2:
+    - tool: smart_home_query
+      arguments:
+        action: "device_status"
+        device_id: "DV004"
+    - tool: smart_home_control
+      arguments:
+        action: "set_device"
+        device_id: "DV004"
+        settings: { recording: true, night_vision: true }
+
+  composite_1:
+    - tool: smart_home
+      arguments:
+        action: "device_status"
+        device_id: "DV004"
+    - tool: smart_home
+      arguments:
+        action: "set_device"
+        device_id: "DV004"
+        settings: { recording: true, night_vision: true }
+
+expected_output:
+  contains:
+    - "camera"
+    - "recording"
+  values: {}

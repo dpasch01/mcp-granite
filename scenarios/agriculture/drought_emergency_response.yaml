@@ -1,0 +1,185 @@
+id: agriculture-008
+domain: agriculture
+name: Drought emergency response
+description: >
+  User triggers a drought emergency protocol. Must check all soil moisture,
+  activate all idle irrigation zones at maximum flow, schedule drone surveys
+  for stressed crops, acknowledge relevant alerts, and update crop health.
+difficulty: hard
+user_prompt: >
+  We're entering a drought emergency. Check all soil moisture sensors,
+  activate every idle irrigation zone at maximum flow rate, schedule
+  drone surveys over any stressed or diseased crops, acknowledge all
+  moisture-related alerts, and give me a complete status report.
+
+gold_standard:
+  primitive:
+    - tool: list_sensors
+      arguments: {}
+    - tool: read_sensor
+      arguments: { sensor_id: "AS001" }
+    - tool: list_irrigation_zones
+      arguments: {}
+    - tool: set_irrigation_zone
+      arguments: { zone_id: "IZ002", status: "active", flow_rate: 50.0 }
+    - tool: set_irrigation_zone
+      arguments: { zone_id: "IZ003", status: "active", flow_rate: 50.0 }
+    - tool: set_irrigation_zone
+      arguments: { zone_id: "IZ006", status: "active", flow_rate: 50.0 }
+    - tool: list_crops
+      arguments: {}
+    - tool: get_crop
+      arguments: { crop_id: "CR003" }
+    - tool: get_crop
+      arguments: { crop_id: "CR006" }
+    - tool: schedule_drone_task
+      arguments:
+        drone_id: "DRONE-A"
+        task_type: "survey"
+        field_zone: "greenhouse"
+        scheduled_time: "2025-06-01T11:00:00"
+    - tool: schedule_drone_task
+      arguments:
+        drone_id: "DRONE-A"
+        task_type: "survey"
+        field_zone: "west field"
+        scheduled_time: "2025-06-01T12:00:00"
+    - tool: get_alerts
+      arguments: {}
+
+  composite_4:
+    - tool: get_field_overview
+      arguments: { field_zone: "north field" }
+    - tool: get_field_overview
+      arguments: { field_zone: "south field" }
+    - tool: get_field_overview
+      arguments: { field_zone: "greenhouse" }
+    - tool: manage_irrigation
+      arguments:
+        action: "activate"
+        zone_id: "IZ002"
+    - tool: manage_irrigation
+      arguments:
+        action: "activate"
+        zone_id: "IZ003"
+    - tool: manage_irrigation
+      arguments:
+        action: "activate"
+        zone_id: "IZ006"
+    - tool: manage_irrigation
+      arguments:
+        action: "adjust"
+        zone_id: "IZ002"
+        flow_rate: 50.0
+    - tool: schedule_farm_operation
+      arguments:
+        operation: "schedule_drone"
+        drone_id: "DRONE-A"
+        task_type: "survey"
+        field_zone: "greenhouse"
+        scheduled_time: "2025-06-01T11:00:00"
+    - tool: handle_farm_alert
+      arguments:
+        alert_id: "AL001"
+        acknowledge: true
+
+  composite_2:
+    - tool: agriculture_query
+      arguments:
+        action: "field_overview"
+        field_zone: "north field"
+    - tool: agriculture_query
+      arguments:
+        action: "field_overview"
+        field_zone: "south field"
+    - tool: agriculture_query
+      arguments:
+        action: "field_overview"
+        field_zone: "greenhouse"
+    - tool: agriculture_query
+      arguments:
+        action: "irrigation_status"
+    - tool: agriculture_control
+      arguments:
+        action: "set_irrigation"
+        zone_id: "IZ002"
+        status: "active"
+        flow_rate: 50.0
+    - tool: agriculture_control
+      arguments:
+        action: "set_irrigation"
+        zone_id: "IZ003"
+        status: "active"
+        flow_rate: 50.0
+    - tool: agriculture_control
+      arguments:
+        action: "set_irrigation"
+        zone_id: "IZ006"
+        status: "active"
+        flow_rate: 50.0
+    - tool: agriculture_control
+      arguments:
+        action: "schedule_drone"
+        drone_id: "DRONE-A"
+        task_type: "survey"
+        field_zone: "greenhouse"
+        scheduled_time: "2025-06-01T11:00:00"
+    - tool: agriculture_control
+      arguments:
+        action: "handle_alert"
+        alert_id: "AL001"
+        acknowledge: true
+
+  composite_1:
+    - tool: agriculture
+      arguments:
+        action: "field_overview"
+        field_zone: "north field"
+    - tool: agriculture
+      arguments:
+        action: "field_overview"
+        field_zone: "south field"
+    - tool: agriculture
+      arguments:
+        action: "field_overview"
+        field_zone: "greenhouse"
+    - tool: agriculture
+      arguments:
+        action: "irrigation_status"
+    - tool: agriculture
+      arguments:
+        action: "set_irrigation"
+        zone_id: "IZ002"
+        status: "active"
+        flow_rate: 50.0
+    - tool: agriculture
+      arguments:
+        action: "set_irrigation"
+        zone_id: "IZ003"
+        status: "active"
+        flow_rate: 50.0
+    - tool: agriculture
+      arguments:
+        action: "set_irrigation"
+        zone_id: "IZ006"
+        status: "active"
+        flow_rate: 50.0
+    - tool: agriculture
+      arguments:
+        action: "schedule_drone"
+        drone_id: "DRONE-A"
+        task_type: "survey"
+        field_zone: "greenhouse"
+        scheduled_time: "2025-06-01T11:00:00"
+    - tool: agriculture
+      arguments:
+        action: "handle_alert"
+        alert_id: "AL001"
+        acknowledge: true
+
+expected_output:
+  contains:
+    - "drought"
+    - "irrigation"
+    - "moisture"
+  values: {}

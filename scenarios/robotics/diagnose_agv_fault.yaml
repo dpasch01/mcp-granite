@@ -1,0 +1,97 @@
+id: robotics-005
+domain: robotics
+name: Diagnose faulted AGV
+description: >
+  AGV Carrier 1 (RB004) is in fault state. User wants to check its sensor readings,
+  review operation logs for the robot, set it to maintenance mode, and check if it
+  had any assigned tasks that need reassignment.
+difficulty: medium
+user_prompt: >
+  AGV Carrier 1 is showing a fault. Check its sensor readings and operation logs to
+  diagnose the issue. Put it into maintenance mode and check if it has any tasks
+  that need to be handled.
+
+gold_standard:
+  primitive:
+    - tool: get_robot_detail
+      arguments: { robot_id: "RB004" }
+    - tool: get_sensor_readings
+      arguments: { robot_id: "RB004" }
+    - tool: get_operation_log
+      arguments: { robot_id: "RB004" }
+    - tool: set_robot
+      arguments: { robot_id: "RB004", status: "maintenance" }
+    - tool: manage_task
+      arguments: { action: "list", workspace: "warehouse_floor" }
+
+  composite_4:
+    - tool: manage_robot_fleet
+      arguments:
+        action: "robot_status"
+        robot_id: "RB004"
+    - tool: monitor_safety
+      arguments:
+        robot_id: "RB004"
+    - tool: manage_robot_fleet
+      arguments:
+        action: "set_robot"
+        robot_id: "RB004"
+        status: "maintenance"
+    - tool: handle_robot_task
+      arguments:
+        action: "list"
+        workspace: "warehouse_floor"
+
+  composite_2:
+    - tool: robotics_query
+      arguments:
+        action: "robot_status"
+        robot_id: "RB004"
+    - tool: robotics_query
+      arguments:
+        action: "sensor_readings"
+        robot_id: "RB004"
+    - tool: robotics_query
+      arguments:
+        action: "operation_log"
+        robot_id: "RB004"
+    - tool: robotics_control
+      arguments:
+        action: "set_robot"
+        robot_id: "RB004"
+        status: "maintenance"
+    - tool: robotics_query
+      arguments:
+        action: "tasks"
+        workspace: "warehouse_floor"
+
+  composite_1:
+    - tool: robotics
+      arguments:
+        action: "robot_status"
+        robot_id: "RB004"
+    - tool: robotics
+      arguments:
+        action: "sensor_readings"
+        robot_id: "RB004"
+    - tool: robotics
+      arguments:
+        action: "operation_log"
+        robot_id: "RB004"
+    - tool: robotics
+      arguments:
+        action: "set_robot"
+        robot_id: "RB004"
+        status: "maintenance"
+    - tool: robotics
+      arguments:
+        action: "tasks"
+        workspace: "warehouse_floor"
+
+expected_output:
+  contains:
+    - "RB004"
+    - "vibration"
+    - "maintenance"
+    - "fault"
+  values: {}

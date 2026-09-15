@@ -1,0 +1,37 @@
+id: industrial-004
+domain: industrial
+name: Factory floor overview
+description: >
+  User wants a quick overview of the entire factory floor including
+  all machine statuses and any active alerts.
+difficulty: easy
+user_prompt: >
+  Give me a quick overview of the factory floor. How many machines are running,
+  any in fault state, and how many active alerts are there?
+
+gold_standard:
+  primitive:
+    - tool: list_machines
+      arguments: {}
+    - tool: get_active_alerts
+      arguments: {}
+
+  composite_4:
+    - tool: get_floor_overview
+      arguments: {}
+
+  composite_2:
+    - tool: industrial_monitor
+      arguments:
+        action: "floor_overview"
+
+  composite_1:
+    - tool: industrial
+      arguments:
+        action: "floor_overview"
+
+expected_output:
+  contains:
+    - "running"
+    - "fault"
+  values: {}

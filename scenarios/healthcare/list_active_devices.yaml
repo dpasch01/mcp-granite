@@ -1,0 +1,39 @@
+id: healthcare-002
+domain: healthcare
+name: List active medical devices
+description: >
+  List all currently active medical devices across the ward to get an
+  overview of equipment in use.
+difficulty: easy
+user_prompt: >
+  Show me all the active medical devices in the ward right now.
+
+gold_standard:
+  primitive:
+    - tool: list_devices
+      arguments: { status: "active" }
+
+  composite_4:
+    - tool: manage_devices
+      arguments:
+        action: "list"
+        status_filter: "active"
+
+  composite_2:
+    - tool: healthcare_query
+      arguments:
+        action: "list_devices"
+        device_status: "active"
+
+  composite_1:
+    - tool: healthcare
+      arguments:
+        action: "list_devices"
+        device_status: "active"
+
+expected_output:
+  contains:
+    - "active"
+    - "monitor"
+    - "ventilator"
+  values: {}

@@ -1,0 +1,45 @@
+id: industrial-001
+domain: industrial
+name: Check CNC Mill health status
+description: >
+  User wants a full health check of the CNC Mill (MC001), including
+  current status, telemetry readings, alert thresholds, and any active alerts.
+difficulty: easy
+user_prompt: >
+  Check the health of the CNC Mill MC001. I need its current status,
+  telemetry readings, configured alert thresholds, and any active alerts.
+  Report any anomalies.
+
+gold_standard:
+  primitive:
+    - tool: get_machine_status
+      arguments: { machine_id: "MC001" }
+    - tool: read_telemetry
+      arguments: { machine_id: "MC001" }
+    - tool: get_alert_thresholds
+      arguments: { machine_id: "MC001" }
+    - tool: get_active_alerts
+      arguments: { machine_id: "MC001" }
+
+  composite_4:
+    - tool: assess_machine_health
+      arguments:
+        machine_id: "MC001"
+
+  composite_2:
+    - tool: industrial_monitor
+      arguments:
+        action: "machine_health"
+        machine_id: "MC001"
+
+  composite_1:
+    - tool: industrial
+      arguments:
+        action: "machine_health"
+        machine_id: "MC001"
+
+expected_output:
+  contains:
+    - "MC001"
+    - "CNC"
+  values: {}

@@ -1,0 +1,127 @@
+id: surveillance-009
+domain: surveillance
+name: Shift change handover
+description: >
+  End of shift handover: user needs to review all alarm zones, verify all
+  cameras are operational, check current patrol status, schedule the evening
+  full patrol, and provide a summary of any unacknowledged events.
+difficulty: hard
+user_prompt: >
+  It's shift change time. Review all alarm zones to make sure they're armed.
+  Verify all cameras are working — fix any that are in fault status by
+  restarting them. Check the current patrol schedule and schedule the evening
+  full patrol covering all locations with Guard D at 18:00. Also show me
+  any unacknowledged security events so I can brief the next shift.
+
+gold_standard:
+  primitive:
+    - tool: list_cameras
+      arguments: {}
+    - tool: set_camera
+      arguments: { camera_id: "CM006", status: "recording", recording: true }
+    - tool: get_alarm_zone
+      arguments: { zone_id: "AZ001" }
+    - tool: get_alarm_zone
+      arguments: { zone_id: "AZ002" }
+    - tool: get_alarm_zone
+      arguments: { zone_id: "AZ003" }
+    - tool: get_alarm_zone
+      arguments: { zone_id: "AZ004" }
+    - tool: manage_patrol
+      arguments: { action: "list" }
+    - tool: manage_patrol
+      arguments:
+        action: "schedule"
+        name: "Evening Full Patrol"
+        route: ["main entrance", "parking lot", "north fence", "loading dock", "lobby", "server room"]
+        scheduled_time: "2025-06-01T18:00:00"
+        assigned_guard: "Guard D"
+    - tool: get_security_events
+      arguments: {}
+
+  composite_4:
+    - tool: get_security_overview
+      arguments: {}
+    - tool: manage_surveillance_ops
+      arguments:
+        action: "set_camera"
+        camera_id: "CM006"
+        status: "recording"
+        recording: true
+    - tool: manage_access_control
+      arguments:
+        action: "list_zones"
+    - tool: manage_surveillance_ops
+      arguments:
+        action: "list_patrols"
+    - tool: manage_surveillance_ops
+      arguments:
+        action: "schedule_patrol"
+        name: "Evening Full Patrol"
+        route: ["main entrance", "parking lot", "north fence", "loading dock", "lobby", "server room"]
+        scheduled_time: "2025-06-01T18:00:00"
+        assigned_guard: "Guard D"
+    - tool: handle_security_alert
+      arguments: {}
+
+  composite_2:
+    - tool: surveillance_query
+      arguments:
+        action: "cameras"
+    - tool: surveillance_control
+      arguments:
+        action: "set_camera"
+        camera_id: "CM006"
+        status: "recording"
+        recording: true
+    - tool: surveillance_query
+      arguments:
+        action: "alarm_zones"
+    - tool: surveillance_query
+      arguments:
+        action: "patrols"
+    - tool: surveillance_control
+      arguments:
+        action: "schedule_patrol"
+        name: "Evening Full Patrol"
+        route: ["main entrance", "parking lot", "north fence", "loading dock", "lobby", "server room"]
+        scheduled_time: "2025-06-01T18:00:00"
+        assigned_guard: "Guard D"
+    - tool: surveillance_query
+      arguments:
+        action: "events"
+
+  composite_1:
+    - tool: surveillance
+      arguments:
+        action: "cameras"
+    - tool: surveillance
+      arguments:
+        action: "set_camera"
+        camera_id: "CM006"
+        status: "recording"
+        recording: true
+    - tool: surveillance
+      arguments:
+        action: "alarm_zones"
+    - tool: surveillance
+      arguments:
+        action: "patrols"
+    - tool: surveillance
+      arguments:
+        action: "schedule_patrol"
+        name: "Evening Full Patrol"
+        route: ["main entrance", "parking lot", "north fence", "loading dock", "lobby", "server room"]
+        scheduled_time: "2025-06-01T18:00:00"
+        assigned_guard: "Guard D"
+    - tool: surveillance
+      arguments:
+        action: "events"
+
+expected_output:
+  contains:
+    - "armed"
+    - "camera"
+    - "patrol"
+    - "Guard D"
+  values: {}

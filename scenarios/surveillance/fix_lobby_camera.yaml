@@ -1,0 +1,88 @@
+id: surveillance-006
+domain: surveillance
+name: Fix lobby camera tamper alert
+description: >
+  The lobby camera (CM006) has a tamper alert (critical event SE004). User
+  wants to restart the camera by setting it to recording, dispatch a patrol
+  to the lobby, and acknowledge the tamper event.
+difficulty: medium
+user_prompt: >
+  The lobby camera has a tamper alert! Restart the lobby camera and set it
+  to recording mode. Dispatch a patrol to check the lobby area. Also
+  acknowledge the camera tamper event.
+
+gold_standard:
+  primitive:
+    - tool: set_camera
+      arguments: { camera_id: "CM006", status: "recording", recording: true }
+    - tool: manage_patrol
+      arguments:
+        action: "schedule"
+        name: "Lobby Tamper Response"
+        route: ["lobby"]
+        scheduled_time: "2025-06-01T09:00:00"
+    - tool: get_security_events
+      arguments: { severity: "critical" }
+
+  composite_4:
+    - tool: manage_surveillance_ops
+      arguments:
+        action: "set_camera"
+        camera_id: "CM006"
+        status: "recording"
+        recording: true
+    - tool: manage_surveillance_ops
+      arguments:
+        action: "schedule_patrol"
+        name: "Lobby Tamper Response"
+        route: ["lobby"]
+        scheduled_time: "2025-06-01T09:00:00"
+    - tool: handle_security_alert
+      arguments:
+        event_id: "SE004"
+        acknowledge: true
+
+  composite_2:
+    - tool: surveillance_control
+      arguments:
+        action: "set_camera"
+        camera_id: "CM006"
+        status: "recording"
+        recording: true
+    - tool: surveillance_control
+      arguments:
+        action: "schedule_patrol"
+        name: "Lobby Tamper Response"
+        route: ["lobby"]
+        scheduled_time: "2025-06-01T09:00:00"
+    - tool: surveillance_control
+      arguments:
+        action: "handle_event"
+        event_id: "SE004"
+        acknowledge: true
+
+  composite_1:
+    - tool: surveillance
+      arguments:
+        action: "set_camera"
+        camera_id: "CM006"
+        status: "recording"
+        recording: true
+    - tool: surveillance
+      arguments:
+        action: "schedule_patrol"
+        name: "Lobby Tamper Response"
+        route: ["lobby"]
+        scheduled_time: "2025-06-01T09:00:00"
+    - tool: surveillance
+      arguments:
+        action: "handle_event"
+        event_id: "SE004"
+        acknowledge: true
+
+expected_output:
+  contains:
+    - "lobby"
+    - "recording"
+    - "tamper"
+  values: {}

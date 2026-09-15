@@ -1,0 +1,51 @@
+id: warehouse-005
+domain: warehouse
+name: Assign pending order to robot
+description: >
+  User wants to assign the pending order to an idle picker robot and start fulfillment.
+difficulty: medium
+user_prompt: >
+  There's a pending order. Find an idle picker robot, assign it to the order,
+  update the order to picking status, and verify the inventory for the items.
+
+gold_standard:
+  primitive:
+    - tool: manage_order
+      arguments: { action: "get", order_id: "PO003" }
+    - tool: list_robots
+      arguments: { status: "idle" }
+    - tool: manage_order
+      arguments: { action: "update", order_id: "PO003", status: "picking", assigned_robot: "WR002" }
+    - tool: list_inventory
+      arguments: {}
+  composite_4:
+    - tool: handle_fulfillment
+      arguments: { action: "get_order", order_id: "PO003" }
+    - tool: manage_equipment
+      arguments: { action: "robot_status", status: "idle" }
+    - tool: handle_fulfillment
+      arguments: { action: "update_order", order_id: "PO003", status: "picking", assigned_robot: "WR002" }
+    - tool: handle_fulfillment
+      arguments: { action: "check_inventory" }
+  composite_2:
+    - tool: warehouse_query
+      arguments: { action: "orders", order_id: "PO003" }
+    - tool: warehouse_query
+      arguments: { action: "robot_status", status: "idle" }
+    - tool: warehouse_control
+      arguments: { action: "update_order", order_id: "PO003", status: "picking", assigned_robot: "WR002" }
+    - tool: warehouse_query
+      arguments: { action: "inventory" }
+  composite_1:
+    - tool: warehouse
+      arguments: { action: "orders", order_id: "PO003" }
+    - tool: warehouse
+      arguments: { action: "robot_status", status: "idle" }
+    - tool: warehouse
+      arguments: { action: "update_order", order_id: "PO003", status: "picking", assigned_robot: "WR002" }
+    - tool: warehouse
+      arguments: { action: "inventory" }
+
+expected_output:
+  contains: ["order", "picking", "robot"]
+  values: {}

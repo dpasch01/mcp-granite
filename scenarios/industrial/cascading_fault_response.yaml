@@ -1,0 +1,105 @@
+id: industrial-008
+domain: industrial
+name: Cascading fault response
+description: >
+  Conveyor belt MC003 fault is affecting downstream operations. User needs
+  to handle the fault, acknowledge all alerts, create urgent work orders,
+  check if other machines are impacted, and schedule preventive maintenance
+  for the welding robot MC004 which shares the production line.
+difficulty: hard
+user_prompt: >
+  The conveyor belt MC003 fault is causing a production line backup. Handle
+  the conveyor fault urgently — acknowledge all its alerts and create a
+  critical work order. Then check the welding robot MC004 which is on the
+  same line — if it shows any stress, schedule preventive maintenance for it
+  too. Give me a full status report on both machines.
+
+gold_standard:
+  primitive:
+    - tool: get_machine_status
+      arguments: { machine_id: "MC003" }
+    - tool: read_telemetry
+      arguments: { machine_id: "MC003" }
+    - tool: get_active_alerts
+      arguments: { machine_id: "MC003" }
+    - tool: acknowledge_alert
+      arguments: { alert_id: "AL001" }
+    - tool: create_work_order
+      arguments:
+        machine_id: "MC003"
+        priority: "critical"
+        description: "Cascading fault - conveyor belt causing production line backup"
+    - tool: get_machine_status
+      arguments: { machine_id: "MC004" }
+    - tool: read_telemetry
+      arguments: { machine_id: "MC004" }
+    - tool: get_alert_thresholds
+      arguments: { machine_id: "MC004" }
+    - tool: get_maintenance_history
+      arguments: { machine_id: "MC004" }
+    - tool: create_work_order
+      arguments:
+        machine_id: "MC004"
+        priority: "high"
+        description: "Preventive maintenance - production line stress from conveyor fault"
+
+  composite_4:
+    - tool: handle_fault
+      arguments:
+        machine_id: "MC003"
+        create_order: true
+        priority: "critical"
+        description: "Cascading fault - conveyor belt causing production line backup"
+    - tool: assess_machine_health
+      arguments: { machine_id: "MC004" }
+    - tool: schedule_maintenance
+      arguments:
+        machine_id: "MC004"
+        reason: "Production line stress from conveyor fault"
+        priority: "high"
+
+  composite_2:
+    - tool: industrial_action
+      arguments:
+        action: "handle_fault"
+        machine_id: "MC003"
+        create_order: true
+        priority: "critical"
+        description: "Cascading fault - conveyor belt causing production line backup"
+    - tool: industrial_monitor
+      arguments:
+        action: "machine_health"
+        machine_id: "MC004"
+    - tool: industrial_action
+      arguments:
+        action: "schedule_maintenance"
+        machine_id: "MC004"
+        reason: "Production line stress from conveyor fault"
+        priority: "high"
+
+  composite_1:
+    - tool: industrial
+      arguments:
+        action: "handle_fault"
+        machine_id: "MC003"
+        create_order: true
+        priority: "critical"
+        description: "Cascading fault - conveyor belt causing production line backup"
+    - tool: industrial
+      arguments:
+        action: "machine_health"
+        machine_id: "MC004"
+    - tool: industrial
+      arguments:
+        action: "schedule_maintenance"
+        machine_id: "MC004"
+        reason: "Production line stress from conveyor fault"
+        priority: "high"
+
+expected_output:
+  contains:
+    - "MC003"
+    - "MC004"
+    - "critical"
+    - "maintenance"
+  values: {}

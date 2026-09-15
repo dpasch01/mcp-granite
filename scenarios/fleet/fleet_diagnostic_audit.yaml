@@ -1,0 +1,114 @@
+id: fleet-007
+domain: fleet
+name: Fleet diagnostic audit
+description: >
+  User wants a full diagnostic audit of the entire fleet. Check diagnostics
+  for every vehicle, identify any with alerts, check the status of vehicles
+  with issues, and compile a full health report.
+difficulty: hard
+user_prompt: >
+  Run a full diagnostic audit on the entire fleet. Check diagnostics for
+  all four vehicles (VH001-VH004), identify any with alerts or issues,
+  and give me a comprehensive fleet health report. If any vehicle has
+  concerning diagnostics, check its current delivery assignments too.
+
+gold_standard:
+  primitive:
+    - tool: list_vehicles
+      arguments: {}
+    - tool: get_vehicle_diagnostics
+      arguments: { vehicle_id: "VH001" }
+    - tool: get_vehicle_diagnostics
+      arguments: { vehicle_id: "VH002" }
+    - tool: get_vehicle_diagnostics
+      arguments: { vehicle_id: "VH003" }
+    - tool: get_vehicle_diagnostics
+      arguments: { vehicle_id: "VH004" }
+    - tool: get_vehicle_status
+      arguments: { vehicle_id: "VH001" }
+    - tool: get_vehicle_status
+      arguments: { vehicle_id: "VH002" }
+    - tool: get_vehicle_status
+      arguments: { vehicle_id: "VH003" }
+    - tool: get_vehicle_status
+      arguments: { vehicle_id: "VH004" }
+    - tool: get_delivery_status
+      arguments: { delivery_id: "DL001" }
+    - tool: get_delivery_status
+      arguments: { delivery_id: "DL002" }
+
+  composite_4:
+    - tool: get_fleet_overview
+      arguments: {}
+    - tool: handle_vehicle_issue
+      arguments:
+        vehicle_id: "VH001"
+        reassign: false
+    - tool: handle_vehicle_issue
+      arguments:
+        vehicle_id: "VH002"
+        reassign: false
+    - tool: handle_vehicle_issue
+      arguments:
+        vehicle_id: "VH003"
+        reassign: false
+    - tool: handle_vehicle_issue
+      arguments:
+        vehicle_id: "VH004"
+        reassign: false
+
+  composite_2:
+    - tool: fleet_query
+      arguments:
+        action: "fleet_overview"
+    - tool: fleet_action
+      arguments:
+        action: "handle_issue"
+        vehicle_id: "VH001"
+        reassign: false
+    - tool: fleet_action
+      arguments:
+        action: "handle_issue"
+        vehicle_id: "VH002"
+        reassign: false
+    - tool: fleet_action
+      arguments:
+        action: "handle_issue"
+        vehicle_id: "VH003"
+        reassign: false
+    - tool: fleet_action
+      arguments:
+        action: "handle_issue"
+        vehicle_id: "VH004"
+        reassign: false
+
+  composite_1:
+    - tool: fleet
+      arguments:
+        action: "fleet_overview"
+    - tool: fleet
+      arguments:
+        action: "handle_issue"
+        vehicle_id: "VH001"
+        reassign: false
+    - tool: fleet
+      arguments:
+        action: "handle_issue"
+        vehicle_id: "VH002"
+        reassign: false
+    - tool: fleet
+      arguments:
+        action: "handle_issue"
+        vehicle_id: "VH003"
+        reassign: false
+    - tool: fleet
+      arguments:
+        action: "handle_issue"
+        vehicle_id: "VH004"
+        reassign: false
+
+expected_output:
+  contains:
+    - "diagnostic"
+    - "VH001"
+  values: {}

@@ -1,0 +1,63 @@
+id: smarthome-003
+domain: smarthome
+name: Create motion-activated lighting automation
+description: >
+  User wants to create an automation rule that turns on the living room
+  light at 50% brightness when the hallway motion sensor detects movement
+  after 10pm.
+difficulty: medium
+user_prompt: >
+  Create an automation rule: when the hallway motion sensor detects
+  movement after 10pm, automatically turn on the living room light
+  at 50% brightness. Name it "Late night hallway light".
+
+gold_standard:
+  primitive:
+    - tool: read_sensor
+      arguments: { sensor_id: "SN003" }
+    - tool: get_device_status
+      arguments: { device_id: "DV001" }
+    - tool: create_automation_rule
+      arguments:
+        name: "Late night hallway light"
+        trigger: { sensor_id: "SN003", condition: "motion_detected", after: "22:00" }
+        action: { device_id: "DV001", settings: { status: "on", brightness: 50 } }
+
+  composite_4:
+    - tool: manage_automation
+      arguments:
+        action: "create"
+        name: "Late night hallway light"
+        trigger: { sensor_id: "SN003", condition: "motion_detected", after: "22:00" }
+        device_action: { device_id: "DV001", settings: { status: "on", brightness: 50 } }
+
+  composite_2:
+    - tool: smart_home_query
+      arguments:
+        action: "sensor_reading"
+        sensor_id: "SN003"
+    - tool: smart_home_control
+      arguments:
+        action: "create_rule"
+        name: "Late night hallway light"
+        trigger: { sensor_id: "SN003", condition: "motion_detected", after: "22:00" }
+        device_action: { device_id: "DV001", settings: { status: "on", brightness: 50 } }
+
+  composite_1:
+    - tool: smart_home
+      arguments:
+        action: "sensor_reading"
+        sensor_id: "SN003"
+    - tool: smart_home
+      arguments:
+        action: "create_rule"
+        name: "Late night hallway light"
+        trigger: { sensor_id: "SN003", condition: "motion_detected", after: "22:00" }
+        device_action: { device_id: "DV001", settings: { status: "on", brightness: 50 } }
+
+expected_output:
+  contains:
+    - "automation"
+    - "motion"
+    - "hallway"
+  values: {}

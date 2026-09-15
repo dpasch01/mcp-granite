@@ -1,0 +1,95 @@
+id: robotics-007
+domain: robotics
+name: Full floor audit
+description: >
+  User wants a complete audit of the entire facility: check all workspaces for robot
+  statuses, review all tasks, check all safety interlocks, review sensor readings for
+  any warnings or critical alerts, and pull the full operation log.
+difficulty: hard
+user_prompt: >
+  Perform a complete floor audit. I need the status of all robots across every workspace,
+  a full list of all tasks and their states, all safety interlock statuses, any sensor
+  warnings or critical readings, and the recent operation log. Give me a complete picture.
+
+gold_standard:
+  primitive:
+    - tool: list_robots
+      arguments: {}
+    - tool: manage_task
+      arguments: { action: "list" }
+    - tool: list_interlocks
+      arguments: {}
+    - tool: get_sensor_readings
+      arguments: {}
+    - tool: get_operation_log
+      arguments: {}
+    - tool: list_waypoints
+      arguments: {}
+
+  composite_4:
+    - tool: get_workspace_overview
+      arguments:
+        workspace: "assembly_line"
+    - tool: get_workspace_overview
+      arguments:
+        workspace: "warehouse_floor"
+    - tool: get_workspace_overview
+      arguments:
+        workspace: "clean_room"
+    - tool: get_workspace_overview
+      arguments:
+        workspace: "outdoor"
+    - tool: get_workspace_overview
+      arguments:
+        workspace: "maintenance_bay"
+    - tool: monitor_safety
+      arguments: {}
+
+  composite_2:
+    - tool: robotics_query
+      arguments:
+        action: "robot_status"
+    - tool: robotics_query
+      arguments:
+        action: "tasks"
+    - tool: robotics_query
+      arguments:
+        action: "interlocks"
+    - tool: robotics_query
+      arguments:
+        action: "sensor_readings"
+    - tool: robotics_query
+      arguments:
+        action: "operation_log"
+    - tool: robotics_query
+      arguments:
+        action: "waypoints"
+
+  composite_1:
+    - tool: robotics
+      arguments:
+        action: "robot_status"
+    - tool: robotics
+      arguments:
+        action: "tasks"
+    - tool: robotics
+      arguments:
+        action: "interlocks"
+    - tool: robotics
+      arguments:
+        action: "sensor_readings"
+    - tool: robotics
+      arguments:
+        action: "operation_log"
+    - tool: robotics
+      arguments:
+        action: "waypoints"
+
+expected_output:
+  contains:
+    - "assembly"
+    - "warehouse"
+    - "fault"
+    - "critical"
+    - "queued"
+  values: {}

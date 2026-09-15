@@ -1,0 +1,83 @@
+id: warehouse-008
+domain: warehouse
+name: Equipment failure response
+description: >
+  Multiple equipment failures. Scanner robot is down and sorting line B
+  has a fault. Must diagnose, reassign tasks, restart equipment, and
+  adjust operations.
+difficulty: hard
+user_prompt: >
+  We have multiple equipment failures — the scanner unit and sorting line B
+  are both down. Check what's happening, put both in maintenance, reassign
+  any affected tasks to working equipment, restart the returns processing
+  conveyor to handle the backlog, and update all affected orders.
+
+gold_standard:
+  primitive:
+    - tool: list_robots
+      arguments: { status: "fault" }
+    - tool: list_conveyors
+      arguments: {}
+    - tool: set_robot
+      arguments: { robot_id: "WR005", status: "maintenance" }
+    - tool: set_conveyor
+      arguments: { belt_id: "CB003", status: "maintenance" }
+    - tool: set_conveyor
+      arguments: { belt_id: "CB006", status: "running", speed_mps: 1.0 }
+    - tool: set_robot
+      arguments: { robot_id: "WR002", status: "active", current_task: "scanning_backup" }
+    - tool: manage_order
+      arguments: { action: "list" }
+    - tool: list_inventory
+      arguments: { zone: "sorting" }
+    - tool: list_sensors
+      arguments: { zone: "sorting" }
+  composite_4:
+    - tool: manage_equipment
+      arguments: { action: "robot_status", status: "fault" }
+    - tool: manage_equipment
+      arguments: { action: "conveyor_status" }
+    - tool: manage_equipment
+      arguments: { action: "set_robot", robot_id: "WR005", status: "maintenance" }
+    - tool: manage_equipment
+      arguments: { action: "set_conveyor", belt_id: "CB003", status: "maintenance" }
+    - tool: manage_equipment
+      arguments: { action: "set_conveyor", belt_id: "CB006", status: "running", speed_mps: 1.0 }
+    - tool: manage_equipment
+      arguments: { action: "set_robot", robot_id: "WR002", status: "active", current_task: "scanning_backup" }
+    - tool: handle_fulfillment
+      arguments: { action: "list_orders" }
+  composite_2:
+    - tool: warehouse_query
+      arguments: { action: "robot_status", status: "fault" }
+    - tool: warehouse_query
+      arguments: { action: "conveyor_status" }
+    - tool: warehouse_control
+      arguments: { action: "set_robot", robot_id: "WR005", status: "maintenance" }
+    - tool: warehouse_control
+      arguments: { action: "set_conveyor", belt_id: "CB003", status: "maintenance" }
+    - tool: warehouse_control
+      arguments: { action: "set_conveyor", belt_id: "CB006", status: "running", speed_mps: 1.0 }
+    - tool: warehouse_control
+      arguments: { action: "set_robot", robot_id: "WR002", status: "active", current_task: "scanning_backup" }
+    - tool: warehouse_query
+      arguments: { action: "orders" }
+  composite_1:
+    - tool: warehouse
+      arguments: { action: "robot_status", status: "fault" }
+    - tool: warehouse
+      arguments: { action: "conveyor_status" }
+    - tool: warehouse
+      arguments: { action: "set_robot", robot_id: "WR005", status: "maintenance" }
+    - tool: warehouse
+      arguments: { action: "set_conveyor", belt_id: "CB003", status: "maintenance" }
+    - tool: warehouse
+      arguments: { action: "set_conveyor", belt_id: "CB006", status: "running", speed_mps: 1.0 }
+    - tool: warehouse
+      arguments: { action: "set_robot", robot_id: "WR002", status: "active", current_task: "scanning_backup" }
+    - tool: warehouse
+      arguments: { action: "orders" }
+
+expected_output:
+  contains: ["maintenance", "fault", "reassign"]
+  values: {}

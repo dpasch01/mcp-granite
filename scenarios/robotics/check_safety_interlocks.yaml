@@ -1,0 +1,37 @@
+id: robotics-003
+domain: robotics
+name: Check warehouse safety interlocks
+description: >
+  User wants to check the safety interlocks on the warehouse floor to see if any are triggered.
+difficulty: easy
+user_prompt: >
+  Check the safety interlocks on the warehouse floor. Are any of them triggered or in an unusual state?
+
+gold_standard:
+  primitive:
+    - tool: list_interlocks
+      arguments: { workspace: "warehouse_floor" }
+
+  composite_4:
+    - tool: monitor_safety
+      arguments:
+        workspace: "warehouse_floor"
+
+  composite_2:
+    - tool: robotics_query
+      arguments:
+        action: "interlocks"
+        workspace: "warehouse_floor"
+
+  composite_1:
+    - tool: robotics
+      arguments:
+        action: "interlocks"
+        workspace: "warehouse_floor"
+
+expected_output:
+  contains:
+    - "warehouse"
+    - "pressure_mat"
+    - "triggered"
+  values: {}

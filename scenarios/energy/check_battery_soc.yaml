@@ -1,0 +1,37 @@
+id: energy-002
+domain: energy
+name: Check battery state of charge
+description: >
+  User wants to see the current state of charge for the main battery bank.
+difficulty: easy
+user_prompt: >
+  What's the state of charge on the main battery bank?
+
+gold_standard:
+  primitive:
+    - tool: get_battery_status
+      arguments: { battery_id: "BT001" }
+
+  composite_4:
+    - tool: manage_power
+      arguments:
+        action: "battery_status"
+        battery_id: "BT001"
+
+  composite_2:
+    - tool: energy_query
+      arguments:
+        action: "battery_status"
+        battery_id: "BT001"
+
+  composite_1:
+    - tool: energy
+      arguments:
+        action: "battery_status"
+        battery_id: "BT001"
+
+expected_output:
+  contains:
+    - "battery"
+    - "charge"
+  values: {}

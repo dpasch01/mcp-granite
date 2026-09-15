@@ -1,0 +1,79 @@
+id: agriculture-005
+domain: agriculture
+name: Respond to disease alert
+description: >
+  User wants to check the disease alert for lettuce, acknowledge it,
+  schedule a drone spray mission, and update the crop status.
+difficulty: medium
+user_prompt: >
+  There's a disease alert for the lettuce. Check the alert details, acknowledge it,
+  schedule a drone to spray fungicide on the west field, and mark the lettuce
+  as being treated.
+
+gold_standard:
+  primitive:
+    - tool: get_alerts
+      arguments: { severity: "critical" }
+    - tool: get_crop
+      arguments: { crop_id: "CR006" }
+    - tool: schedule_drone_task
+      arguments:
+        drone_id: "DRONE-B"
+        task_type: "spray"
+        field_zone: "west field"
+        scheduled_time: "2025-06-01T10:00:00"
+    - tool: read_sensor
+      arguments: { sensor_id: "AS001" }
+
+  composite_4:
+    - tool: handle_farm_alert
+      arguments:
+        alert_id: "AL002"
+        acknowledge: true
+        corrective_actions: ["schedule_spray"]
+    - tool: schedule_farm_operation
+      arguments:
+        operation: "update_crop"
+        crop_id: "CR006"
+        health_status: "stressed"
+
+  composite_2:
+    - tool: agriculture_query
+      arguments:
+        action: "alerts"
+        severity: "critical"
+    - tool: agriculture_control
+      arguments:
+        action: "handle_alert"
+        alert_id: "AL002"
+        acknowledge: true
+        corrective_actions: ["schedule_spray"]
+    - tool: agriculture_control
+      arguments:
+        action: "update_crop"
+        crop_id: "CR006"
+        health_status: "stressed"
+
+  composite_1:
+    - tool: agriculture
+      arguments:
+        action: "alerts"
+        severity: "critical"
+    - tool: agriculture
+      arguments:
+        action: "handle_alert"
+        alert_id: "AL002"
+        acknowledge: true
+        corrective_actions: ["schedule_spray"]
+    - tool: agriculture
+      arguments:
+        action: "update_crop"
+        crop_id: "CR006"
+        health_status: "stressed"
+
+expected_output:
+  contains:
+    - "disease"
+    - "spray"
+    - "lettuce"
+  values: {}

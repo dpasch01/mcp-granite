@@ -1,0 +1,34 @@
+id: surveillance-002
+domain: surveillance
+name: View recent security events
+description: >
+  User wants to see the most recent security events, particularly any
+  warnings or critical alerts that need attention.
+difficulty: easy
+user_prompt: >
+  Show me the recent security events. Are there any warnings or critical alerts?
+
+gold_standard:
+  primitive:
+    - tool: get_security_events
+      arguments: {}
+
+  composite_4:
+    - tool: handle_security_alert
+      arguments: {}
+
+  composite_2:
+    - tool: surveillance_query
+      arguments:
+        action: "events"
+
+  composite_1:
+    - tool: surveillance
+      arguments:
+        action: "events"
+
+expected_output:
+  contains:
+    - "event"
+    - "severity"
+  values: {}

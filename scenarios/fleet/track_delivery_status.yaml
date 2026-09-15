@@ -1,0 +1,44 @@
+id: fleet-003
+domain: fleet
+name: Track delivery with full status report
+description: >
+  User wants a comprehensive status report on delivery DL001, including
+  the vehicle location, driver information, and route conditions.
+difficulty: easy
+user_prompt: >
+  Give me a full status report on delivery DL001. I need to know where
+  the vehicle is, who the driver is, and what the route conditions look like.
+
+gold_standard:
+  primitive:
+    - tool: get_delivery_status
+      arguments: { delivery_id: "DL001" }
+    - tool: get_vehicle_status
+      arguments: { vehicle_id: "VH002" }
+    - tool: get_driver_info
+      arguments: { driver_id: "DR002" }
+    - tool: get_route_info
+      arguments: { origin: "Warehouse A", destination: "Customer Zone A" }
+
+  composite_4:
+    - tool: get_delivery_summary
+      arguments:
+        delivery_id: "DL001"
+
+  composite_2:
+    - tool: fleet_query
+      arguments:
+        action: "delivery_summary"
+        delivery_id: "DL001"
+
+  composite_1:
+    - tool: fleet
+      arguments:
+        action: "delivery_summary"
+        delivery_id: "DL001"
+
+expected_output:
+  contains:
+    - "DL001"
+    - "in_transit"
+  values: {}

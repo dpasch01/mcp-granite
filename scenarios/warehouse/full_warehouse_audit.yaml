@@ -1,0 +1,79 @@
+id: warehouse-007
+domain: warehouse
+name: Full warehouse audit
+description: >
+  User requests a complete warehouse audit covering all zones, equipment,
+  inventory, orders, and environment sensors.
+difficulty: hard
+user_prompt: >
+  I need a full warehouse audit. Check all zones, all conveyors, all robots,
+  complete inventory levels, dock door status, environment sensors, and
+  all current orders. Flag anything that needs attention.
+
+gold_standard:
+  primitive:
+    - tool: list_conveyors
+      arguments: {}
+    - tool: list_robots
+      arguments: {}
+    - tool: list_inventory
+      arguments: {}
+    - tool: get_dock_door
+      arguments: { door_id: "DD001" }
+    - tool: get_dock_door
+      arguments: { door_id: "DD002" }
+    - tool: get_dock_door
+      arguments: { door_id: "DD003" }
+    - tool: list_sensors
+      arguments: {}
+    - tool: manage_order
+      arguments: { action: "list" }
+    - tool: list_robots
+      arguments: { status: "fault" }
+  composite_4:
+    - tool: get_zone_overview
+      arguments: { zone: "inbound" }
+    - tool: get_zone_overview
+      arguments: { zone: "sorting" }
+    - tool: get_zone_overview
+      arguments: { zone: "packing" }
+    - tool: get_zone_overview
+      arguments: { zone: "outbound" }
+    - tool: handle_fulfillment
+      arguments: { action: "list_orders" }
+    - tool: monitor_environment
+      arguments: {}
+  composite_2:
+    - tool: warehouse_query
+      arguments: { action: "zone_overview", zone: "inbound" }
+    - tool: warehouse_query
+      arguments: { action: "zone_overview", zone: "sorting" }
+    - tool: warehouse_query
+      arguments: { action: "zone_overview", zone: "packing" }
+    - tool: warehouse_query
+      arguments: { action: "zone_overview", zone: "outbound" }
+    - tool: warehouse_query
+      arguments: { action: "orders" }
+    - tool: warehouse_query
+      arguments: { action: "sensors" }
+    - tool: warehouse_query
+      arguments: { action: "dock_status" }
+  composite_1:
+    - tool: warehouse
+      arguments: { action: "zone_overview", zone: "inbound" }
+    - tool: warehouse
+      arguments: { action: "zone_overview", zone: "sorting" }
+    - tool: warehouse
+      arguments: { action: "zone_overview", zone: "packing" }
+    - tool: warehouse
+      arguments: { action: "zone_overview", zone: "outbound" }
+    - tool: warehouse
+      arguments: { action: "orders" }
+    - tool: warehouse
+      arguments: { action: "sensors" }
+    - tool: warehouse
+      arguments: { action: "dock_status" }
+
+expected_output:
+  contains: ["audit", "conveyor", "inventory"]
+  values: {}

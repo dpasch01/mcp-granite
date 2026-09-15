@@ -1,0 +1,129 @@
+id: smarthome-009
+domain: smarthome
+name: Guest arrival setup
+description: >
+  User is preparing for a guest arrival. Needs to check all rooms, set
+  the living room to movie mode, unlock the front door, enable the camera
+  for the backyard, turn on the kitchen speaker, adjust bedroom blinds,
+  check automation rules, and create a welcome automation.
+difficulty: hard
+user_prompt: >
+  A guest is arriving soon. Set the living room to movie mode for a nice
+  welcome. Unlock the front door, turn on the backyard camera, open the
+  bedroom blinds fully, turn on the kitchen speaker at volume 40, and
+  create an automation rule called "Guest welcome" that turns on all
+  lights when the front door opens.
+
+gold_standard:
+  primitive:
+    - tool: list_devices
+      arguments: {}
+    - tool: set_device
+      arguments: { device_id: "DV001", settings: { status: "on", brightness: 15 } }
+    - tool: set_device
+      arguments: { device_id: "DV003", settings: { locked: false } }
+    - tool: set_device
+      arguments: { device_id: "DV004", settings: { status: "on", recording: true } }
+    - tool: set_device
+      arguments: { device_id: "DV005", settings: { status: "on", position: 100 } }
+    - tool: set_device
+      arguments: { device_id: "DV006", settings: { status: "on", volume: 40 } }
+    - tool: read_sensor
+      arguments: { sensor_id: "SN005" }
+    - tool: get_automation_rule
+      arguments: {}
+      required: false
+    - tool: create_automation_rule
+      arguments:
+        name: "Guest welcome"
+        trigger: { condition: "door_open", sensor_id: "SN005" }
+        action: { target: "lights", command: "on", brightness: 100 }
+
+  composite_4:
+    - tool: set_room_mode
+      arguments:
+        location: "living room"
+        mode: "movie"
+    - tool: handle_alert
+      arguments:
+        sensor_id: "SN005"
+        actions: ["unlock_doors", "start_camera"]
+    - tool: manage_automation
+      arguments:
+        action: "create"
+        name: "Guest welcome"
+        trigger: { condition: "door_open", sensor_id: "SN005" }
+        device_action: { target: "lights", command: "on", brightness: 100 }
+
+  composite_2:
+    - tool: smart_home_control
+      arguments:
+        action: "set_mode"
+        location: "living room"
+        mode: "movie"
+    - tool: smart_home_control
+      arguments:
+        action: "set_device"
+        device_id: "DV003"
+        settings: { locked: false }
+    - tool: smart_home_control
+      arguments:
+        action: "set_device"
+        device_id: "DV004"
+        settings: { status: "on", recording: true }
+    - tool: smart_home_control
+      arguments:
+        action: "set_device"
+        device_id: "DV005"
+        settings: { status: "on", position: 100 }
+    - tool: smart_home_control
+      arguments:
+        action: "set_device"
+        device_id: "DV006"
+        settings: { status: "on", volume: 40 }
+    - tool: smart_home_control
+      arguments:
+        action: "create_rule"
+        name: "Guest welcome"
+        trigger: { condition: "door_open", sensor_id: "SN005" }
+        device_action: { target: "lights", command: "on", brightness: 100 }
+
+  composite_1:
+    - tool: smart_home
+      arguments:
+        action: "set_mode"
+        location: "living room"
+        mode: "movie"
+    - tool: smart_home
+      arguments:
+        action: "set_device"
+        device_id: "DV003"
+        settings: { locked: false }
+    - tool: smart_home
+      arguments:
+        action: "set_device"
+        device_id: "DV004"
+        settings: { status: "on", recording: true }
+    - tool: smart_home
+      arguments:
+        action: "set_device"
+        device_id: "DV005"
+        settings: { status: "on", position: 100 }
+    - tool: smart_home
+      arguments:
+        action: "set_device"
+        device_id: "DV006"
+        settings: { status: "on", volume: 40 }
+    - tool: smart_home
+      arguments:
+        action: "create_rule"
+        name: "Guest welcome"
+        trigger: { condition: "door_open", sensor_id: "SN005" }
+        device_action: { target: "lights", command: "on", brightness: 100 }
+
+expected_output:
+  contains:
+    - "movie"
+    - "unlock"
+    - "Guest welcome"
+  values: {}

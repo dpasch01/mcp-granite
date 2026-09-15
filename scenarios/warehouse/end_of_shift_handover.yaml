@@ -1,0 +1,91 @@
+id: warehouse-009
+domain: warehouse
+name: End of shift handover
+description: >
+  User performs end-of-shift handover: audit all equipment, complete or reassign
+  pending orders, close dock doors, check environment, and prepare summary.
+difficulty: hard
+user_prompt: >
+  It's end of shift. Do a complete handover: check all robot statuses and
+  send idle ones to charging, review all pending and in-progress orders,
+  close dock doors that aren't actively loading, verify environment sensors
+  are within range, stop non-essential conveyors, and give me a summary
+  of everything that needs attention for the next shift.
+
+gold_standard:
+  primitive:
+    - tool: list_robots
+      arguments: {}
+    - tool: set_robot
+      arguments: { robot_id: "WR002", status: "charging" }
+    - tool: manage_order
+      arguments: { action: "list" }
+    - tool: get_dock_door
+      arguments: { door_id: "DD001" }
+    - tool: get_dock_door
+      arguments: { door_id: "DD002" }
+    - tool: get_dock_door
+      arguments: { door_id: "DD003" }
+    - tool: set_dock_door
+      arguments: { door_id: "DD003", status: "closed" }
+    - tool: list_sensors
+      arguments: {}
+    - tool: set_conveyor
+      arguments: { belt_id: "CB006", status: "stopped" }
+    - tool: list_conveyors
+      arguments: {}
+  composite_4:
+    - tool: manage_equipment
+      arguments: { action: "robot_status" }
+    - tool: manage_equipment
+      arguments: { action: "set_robot", robot_id: "WR002", status: "charging" }
+    - tool: handle_fulfillment
+      arguments: { action: "list_orders" }
+    - tool: manage_equipment
+      arguments: { action: "dock_status" }
+    - tool: manage_equipment
+      arguments: { action: "set_dock", door_id: "DD003", status: "closed" }
+    - tool: monitor_environment
+      arguments: {}
+    - tool: manage_equipment
+      arguments: { action: "set_conveyor", belt_id: "CB006", status: "stopped" }
+    - tool: manage_equipment
+      arguments: { action: "conveyor_status" }
+  composite_2:
+    - tool: warehouse_query
+      arguments: { action: "robot_status" }
+    - tool: warehouse_control
+      arguments: { action: "set_robot", robot_id: "WR002", status: "charging" }
+    - tool: warehouse_query
+      arguments: { action: "orders" }
+    - tool: warehouse_query
+      arguments: { action: "dock_status" }
+    - tool: warehouse_control
+      arguments: { action: "set_dock", door_id: "DD003", status: "closed" }
+    - tool: warehouse_query
+      arguments: { action: "sensors" }
+    - tool: warehouse_control
+      arguments: { action: "set_conveyor", belt_id: "CB006", status: "stopped" }
+    - tool: warehouse_query
+      arguments: { action: "conveyor_status" }
+  composite_1:
+    - tool: warehouse
+      arguments: { action: "robot_status" }
+    - tool: warehouse
+      arguments: { action: "set_robot", robot_id: "WR002", status: "charging" }
+    - tool: warehouse
+      arguments: { action: "orders" }
+    - tool: warehouse
+      arguments: { action: "dock_status" }
+    - tool: warehouse
+      arguments: { action: "set_dock", door_id: "DD003", status: "closed" }
+    - tool: warehouse
+      arguments: { action: "sensors" }
+    - tool: warehouse
+      arguments: { action: "set_conveyor", belt_id: "CB006", status: "stopped" }
+    - tool: warehouse
+      arguments: { action: "conveyor_status" }
+
+expected_output:
+  contains: ["shift", "robot", "dock"]
+  values: {}

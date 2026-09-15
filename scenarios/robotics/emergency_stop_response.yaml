@@ -1,0 +1,185 @@
+id: robotics-008
+domain: robotics
+name: Emergency stop response
+description: >
+  An emergency stop has been triggered on the assembly line. User needs to: stop all
+  robots in that workspace (set to e_stop), check all interlocks, review sensor readings
+  for the assembly line robots, check the operation log for recent critical events, and
+  create a diagnostic task for each robot on the line.
+difficulty: hard
+user_prompt: >
+  Emergency! Trigger an e-stop response on the assembly line. Set all assembly line
+  robots to e_stop status, check all interlocks on the line, review sensor readings
+  for assembly robots, check the critical operation logs, and create diagnostic tasks
+  for Assembly Arm A and Assembly Arm B.
+
+gold_standard:
+  primitive:
+    - tool: list_robots
+      arguments: { workspace: "assembly_line" }
+    - tool: set_robot
+      arguments: { robot_id: "RB001", status: "e_stop" }
+    - tool: set_robot
+      arguments: { robot_id: "RB002", status: "e_stop" }
+    - tool: list_interlocks
+      arguments: { workspace: "assembly_line" }
+    - tool: get_sensor_readings
+      arguments: { robot_id: "RB001" }
+    - tool: get_sensor_readings
+      arguments: { robot_id: "RB002" }
+    - tool: get_operation_log
+      arguments: { severity: "critical" }
+    - tool: manage_task
+      arguments:
+        action: "create"
+        name: "Diagnostic Arm A"
+        task_type: "calibrate"
+        workspace: "assembly_line"
+        priority: 1
+        parameters: { target_robot: "RB001", type: "post_estop_diagnostic" }
+    - tool: manage_task
+      arguments:
+        action: "create"
+        name: "Diagnostic Arm B"
+        task_type: "calibrate"
+        workspace: "assembly_line"
+        priority: 1
+        parameters: { target_robot: "RB002", type: "post_estop_diagnostic" }
+
+  composite_4:
+    - tool: get_workspace_overview
+      arguments:
+        workspace: "assembly_line"
+    - tool: manage_robot_fleet
+      arguments:
+        action: "set_robot"
+        robot_id: "RB001"
+        status: "e_stop"
+    - tool: manage_robot_fleet
+      arguments:
+        action: "set_robot"
+        robot_id: "RB002"
+        status: "e_stop"
+    - tool: monitor_safety
+      arguments:
+        workspace: "assembly_line"
+    - tool: handle_robot_task
+      arguments:
+        action: "create"
+        name: "Diagnostic Arm A"
+        task_type: "calibrate"
+        workspace: "assembly_line"
+        priority: 1
+        parameters: { target_robot: "RB001", type: "post_estop_diagnostic" }
+    - tool: handle_robot_task
+      arguments:
+        action: "create"
+        name: "Diagnostic Arm B"
+        task_type: "calibrate"
+        workspace: "assembly_line"
+        priority: 1
+        parameters: { target_robot: "RB002", type: "post_estop_diagnostic" }
+
+  composite_2:
+    - tool: robotics_query
+      arguments:
+        action: "workspace_overview"
+        workspace: "assembly_line"
+    - tool: robotics_control
+      arguments:
+        action: "set_robot"
+        robot_id: "RB001"
+        status: "e_stop"
+    - tool: robotics_control
+      arguments:
+        action: "set_robot"
+        robot_id: "RB002"
+        status: "e_stop"
+    - tool: robotics_query
+      arguments:
+        action: "interlocks"
+        workspace: "assembly_line"
+    - tool: robotics_query
+      arguments:
+        action: "sensor_readings"
+        robot_id: "RB001"
+    - tool: robotics_query
+      arguments:
+        action: "sensor_readings"
+        robot_id: "RB002"
+    - tool: robotics_query
+      arguments:
+        action: "operation_log"
+        severity: "critical"
+    - tool: robotics_control
+      arguments:
+        action: "create_task"
+        name: "Diagnostic Arm A"
+        task_type: "calibrate"
+        workspace: "assembly_line"
+        priority: 1
+        parameters: { target_robot: "RB001", type: "post_estop_diagnostic" }
+    - tool: robotics_control
+      arguments:
+        action: "create_task"
+        name: "Diagnostic Arm B"
+        task_type: "calibrate"
+        workspace: "assembly_line"
+        priority: 1
+        parameters: { target_robot: "RB002", type: "post_estop_diagnostic" }
+
+  composite_1:
+    - tool: robotics
+      arguments:
+        action: "workspace_overview"
+        workspace: "assembly_line"
+    - tool: robotics
+      arguments:
+        action: "set_robot"
+        robot_id: "RB001"
+        status: "e_stop"
+    - tool: robotics
+      arguments:
+        action: "set_robot"
+        robot_id: "RB002"
+        status: "e_stop"
+    - tool: robotics
+      arguments:
+        action: "interlocks"
+        workspace: "assembly_line"
+    - tool: robotics
+      arguments:
+        action: "sensor_readings"
+        robot_id: "RB001"
+    - tool: robotics
+      arguments:
+        action: "sensor_readings"
+        robot_id: "RB002"
+    - tool: robotics
+      arguments:
+        action: "operation_log"
+        severity: "critical"
+    - tool: robotics
+      arguments:
+        action: "create_task"
+        name: "Diagnostic Arm A"
+        task_type: "calibrate"
+        workspace: "assembly_line"
+        priority: 1
+        parameters: { target_robot: "RB001", type: "post_estop_diagnostic" }
+    - tool: robotics
+      arguments:
+        action: "create_task"
+        name: "Diagnostic Arm B"
+        task_type: "calibrate"
+        workspace: "assembly_line"
+        priority: 1
+        parameters: { target_robot: "RB002", type: "post_estop_diagnostic" }
+
+expected_output:
+  contains:
+    - "e_stop"
+    - "assembly"
+    - "diagnostic"
+    - "critical"
+  values: {}

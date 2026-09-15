@@ -1,0 +1,53 @@
+id: warehouse-004
+domain: warehouse
+name: Fix faulty conveyor and reroute
+description: >
+  User reports sorting line B is faulty. Check it, stop it for maintenance,
+  increase sorting line A speed, and check affected orders.
+difficulty: medium
+user_prompt: >
+  Sorting Line B has a fault. Check its status, put it into maintenance mode,
+  increase Sorting Line A speed to compensate, and check what orders
+  are currently being picked.
+
+gold_standard:
+  primitive:
+    - tool: list_conveyors
+      arguments: { zone: "sorting" }
+    - tool: set_conveyor
+      arguments: { belt_id: "CB003", status: "maintenance" }
+    - tool: set_conveyor
+      arguments: { belt_id: "CB002", speed_mps: 2.5 }
+    - tool: manage_order
+      arguments: { action: "list", status: "picking" }
+  composite_4:
+    - tool: manage_equipment
+      arguments: { action: "conveyor_status", zone: "sorting" }
+    - tool: manage_equipment
+      arguments: { action: "set_conveyor", belt_id: "CB003", status: "maintenance" }
+    - tool: manage_equipment
+      arguments: { action: "set_conveyor", belt_id: "CB002", speed_mps: 2.5 }
+    - tool: handle_fulfillment
+      arguments: { action: "list_orders", status: "picking" }
+  composite_2:
+    - tool: warehouse_query
+      arguments: { action: "conveyor_status", zone: "sorting" }
+    - tool: warehouse_control
+      arguments: { action: "set_conveyor", belt_id: "CB003", status: "maintenance" }
+    - tool: warehouse_control
+      arguments: { action: "set_conveyor", belt_id: "CB002", speed_mps: 2.5 }
+    - tool: warehouse_query
+      arguments: { action: "orders", status: "picking" }
+  composite_1:
+    - tool: warehouse
+      arguments: { action: "conveyor_status", zone: "sorting" }
+    - tool: warehouse
+      arguments: { action: "set_conveyor", belt_id: "CB003", status: "maintenance" }
+    - tool: warehouse
+      arguments: { action: "set_conveyor", belt_id: "CB002", speed_mps: 2.5 }
+    - tool: warehouse
+      arguments: { action: "orders", status: "picking" }
+
+expected_output:
+  contains: ["conveyor", "fault", "maintenance"]
+  values: {}

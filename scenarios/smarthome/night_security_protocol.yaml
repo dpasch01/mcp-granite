@@ -1,0 +1,110 @@
+id: smarthome-007
+domain: smarthome
+name: Night security protocol
+description: >
+  User wants to activate a full night security protocol: set living room
+  to night mode, lock all doors, enable camera recording, check all door
+  sensors, review security events, and create an automation rule for
+  door-open alerts.
+difficulty: hard
+user_prompt: >
+  Activate the full night security protocol. Set the living room to night mode,
+  make sure all doors are locked, enable camera recording with night vision,
+  check the front door sensor status, review any recent security events,
+  and create an automation rule that sounds the alarm if any door opens after 11pm.
+
+gold_standard:
+  primitive:
+    - tool: list_devices
+      arguments: {}
+    - tool: set_device
+      arguments: { device_id: "DV001", settings: { brightness: 5 } }
+    - tool: set_device
+      arguments: { device_id: "DV002", settings: { target_temp: 18, mode: "night" } }
+    - tool: set_device
+      arguments: { device_id: "DV003", settings: { status: "on", locked: true } }
+    - tool: set_device
+      arguments: { device_id: "DV004", settings: { status: "on", recording: true, night_vision: true } }
+    - tool: read_sensor
+      arguments: { sensor_id: "SN005" }
+    - tool: get_event_log
+      arguments: { severity: "warning" }
+    - tool: create_automation_rule
+      arguments:
+        name: "Night door alarm"
+        trigger: { condition: "door_open", after: "23:00" }
+        action: { target: "speaker", command: "alarm" }
+
+  composite_4:
+    - tool: set_room_mode
+      arguments:
+        location: "living room"
+        mode: "night"
+    - tool: get_room_status
+      arguments:
+        location: "front door"
+    - tool: manage_automation
+      arguments:
+        action: "create"
+        name: "Night door alarm"
+        trigger: { condition: "door_open", after: "23:00" }
+        device_action: { target: "speaker", command: "alarm" }
+
+  composite_2:
+    - tool: smart_home_control
+      arguments:
+        action: "set_mode"
+        location: "living room"
+        mode: "night"
+    - tool: smart_home_query
+      arguments:
+        action: "sensor_reading"
+        sensor_id: "SN005"
+    - tool: smart_home_query
+      arguments:
+        action: "event_log"
+        severity: "warning"
+    - tool: smart_home_control
+      arguments:
+        action: "set_device"
+        device_id: "DV004"
+        settings: { status: "on", recording: true, night_vision: true }
+    - tool: smart_home_control
+      arguments:
+        action: "create_rule"
+        name: "Night door alarm"
+        trigger: { condition: "door_open", after: "23:00" }
+        device_action: { target: "speaker", command: "alarm" }
+
+  composite_1:
+    - tool: smart_home
+      arguments:
+        action: "set_mode"
+        location: "living room"
+        mode: "night"
+    - tool: smart_home
+      arguments:
+        action: "sensor_reading"
+        sensor_id: "SN005"
+    - tool: smart_home
+      arguments:
+        action: "event_log"
+        severity: "warning"
+    - tool: smart_home
+      arguments:
+        action: "set_device"
+        device_id: "DV004"
+        settings: { status: "on", recording: true, night_vision: true }
+    - tool: smart_home
+      arguments:
+        action: "create_rule"
+        name: "Night door alarm"
+        trigger: { condition: "door_open", after: "23:00" }
+        device_action: { target: "speaker", command: "alarm" }
+
+expected_output:
+  contains:
+    - "night"
+    - "locked"
+    - "alarm"
+  values: {}

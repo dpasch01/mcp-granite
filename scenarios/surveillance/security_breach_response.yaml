@@ -1,0 +1,114 @@
+id: surveillance-008
+domain: surveillance
+name: Security breach response
+description: >
+  A security breach is detected. User wants to execute full lockdown:
+  lock all access points, enable all cameras to recording, arm all alarm
+  zones, dispatch an emergency patrol, acknowledge the motion detection
+  event (SE001), and acknowledge the camera tamper event (SE004).
+difficulty: hard
+user_prompt: >
+  We have a security breach! Execute full lockdown immediately. Lock all
+  access points, enable recording on all cameras, arm all alarm zones,
+  dispatch an emergency patrol to cover the main entrance, parking lot,
+  and north fence. Acknowledge the motion detection alert and the camera
+  tamper alert.
+
+gold_standard:
+  primitive:
+    - tool: set_access_point
+      arguments: { point_id: "AP001", status: "locked" }
+    - tool: set_access_point
+      arguments: { point_id: "AP002", status: "locked" }
+    - tool: set_access_point
+      arguments: { point_id: "AP003", status: "locked" }
+    - tool: set_access_point
+      arguments: { point_id: "AP004", status: "locked" }
+    - tool: set_access_point
+      arguments: { point_id: "AP005", status: "locked" }
+    - tool: set_access_point
+      arguments: { point_id: "AP006", status: "locked" }
+    - tool: set_camera
+      arguments: { camera_id: "CM001", status: "recording", recording: true }
+    - tool: set_camera
+      arguments: { camera_id: "CM002", status: "recording", recording: true }
+    - tool: set_camera
+      arguments: { camera_id: "CM003", status: "recording", recording: true }
+    - tool: set_camera
+      arguments: { camera_id: "CM004", status: "recording", recording: true }
+    - tool: set_camera
+      arguments: { camera_id: "CM005", status: "recording", recording: true }
+    - tool: set_camera
+      arguments: { camera_id: "CM006", status: "recording", recording: true }
+    - tool: set_alarm_zone
+      arguments: { zone_id: "AZ001", status: "armed" }
+    - tool: set_alarm_zone
+      arguments: { zone_id: "AZ002", status: "armed" }
+    - tool: set_alarm_zone
+      arguments: { zone_id: "AZ003", status: "armed" }
+    - tool: set_alarm_zone
+      arguments: { zone_id: "AZ004", status: "armed" }
+    - tool: manage_patrol
+      arguments:
+        action: "schedule"
+        name: "Emergency Response"
+        route: ["main entrance", "parking lot", "north fence"]
+        scheduled_time: "2025-06-01T09:00:00"
+
+  composite_4:
+    - tool: handle_security_alert
+      arguments:
+        event_id: "SE001"
+        acknowledge: true
+        response_actions:
+          - "lockdown"
+          - "enable_cameras"
+          - "arm_all_zones"
+          - "dispatch_patrol"
+    - tool: handle_security_alert
+      arguments:
+        event_id: "SE004"
+        acknowledge: true
+
+  composite_2:
+    - tool: surveillance_control
+      arguments:
+        action: "handle_event"
+        event_id: "SE001"
+        acknowledge: true
+        response_actions:
+          - "lockdown"
+          - "enable_cameras"
+          - "arm_all_zones"
+          - "dispatch_patrol"
+    - tool: surveillance_control
+      arguments:
+        action: "handle_event"
+        event_id: "SE004"
+        acknowledge: true
+
+  composite_1:
+    - tool: surveillance
+      arguments:
+        action: "handle_event"
+        event_id: "SE001"
+        acknowledge: true
+        response_actions:
+          - "lockdown"
+          - "enable_cameras"
+          - "arm_all_zones"
+          - "dispatch_patrol"
+    - tool: surveillance
+      arguments:
+        action: "handle_event"
+        event_id: "SE004"
+        acknowledge: true
+
+expected_output:
+  contains:
+    - "lockdown"
+    - "locked"
+    - "armed"
+    - "recording"
+    - "patrol"
+  values: {}

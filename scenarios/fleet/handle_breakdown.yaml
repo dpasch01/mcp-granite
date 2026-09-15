@@ -1,0 +1,53 @@
+id: fleet-002
+domain: fleet
+name: Handle vehicle breakdown and reassign delivery
+description: >
+  Vehicle VH002 has a tire pressure alert. User wants to check
+  diagnostics, find if delivery DL002 is affected, and reassign
+  it to another available vehicle.
+difficulty: medium
+user_prompt: >
+  Vehicle VH002 has reported a tire pressure alert. Check its diagnostics.
+  Delivery DL002 is assigned to that vehicle — if it's affected, reassign
+  it to another available vehicle while keeping the same driver.
+
+gold_standard:
+  primitive:
+    - tool: get_vehicle_diagnostics
+      arguments: { vehicle_id: "VH002" }
+    - tool: get_delivery_status
+      arguments: { delivery_id: "DL002" }
+    - tool: list_vehicles
+      arguments: { status_filter: "available" }
+    - tool: get_driver_info
+      arguments: { driver_id: "DR002" }
+    - tool: assign_delivery
+      arguments: { delivery_id: "DL002", vehicle_id: "VH004", driver_id: "DR002" }
+    - tool: update_delivery_status
+      arguments: { delivery_id: "DL002", status: "in_transit" }
+
+  composite_4:
+    - tool: handle_vehicle_issue
+      arguments:
+        vehicle_id: "VH002"
+        reassign: true
+
+  composite_2:
+    - tool: fleet_action
+      arguments:
+        action: "handle_issue"
+        vehicle_id: "VH002"
+        reassign: true
+
+  composite_1:
+    - tool: fleet
+      arguments:
+        action: "handle_issue"
+        vehicle_id: "VH002"
+        reassign: true
+
+expected_output:
+  contains:
+    - "VH002"
+    - "reassign"
+  values: {}

@@ -1,0 +1,52 @@
+id: fleet-001
+domain: fleet
+name: Dispatch urgent delivery
+description: >
+  An urgent delivery DL003 needs to be dispatched from Warehouse A
+  to Customer Zone B. User wants to find an available van and driver,
+  check the route, and assign them.
+difficulty: easy
+user_prompt: >
+  We have an urgent delivery DL003 that needs to go from Warehouse A
+  to Customer Zone B. Find an available van and an available driver,
+  check the route conditions, assign them to the delivery, and mark
+  it as picked up.
+
+gold_standard:
+  primitive:
+    - tool: list_vehicles
+      arguments: { status_filter: "available" }
+    - tool: list_drivers
+      arguments: { status_filter: "available" }
+    - tool: get_route_info
+      arguments: { origin: "Warehouse A", destination: "Customer Zone B" }
+    - tool: assign_delivery
+      arguments: { delivery_id: "DL003", vehicle_id: "VH001", driver_id: "DR001" }
+    - tool: update_delivery_status
+      arguments: { delivery_id: "DL003", status: "in_transit" }
+
+  composite_4:
+    - tool: dispatch_delivery
+      arguments:
+        delivery_id: "DL003"
+        vehicle_type: "van"
+
+  composite_2:
+    - tool: fleet_action
+      arguments:
+        action: "dispatch"
+        delivery_id: "DL003"
+        vehicle_type: "van"
+
+  composite_1:
+    - tool: fleet
+      arguments:
+        action: "dispatch"
+        delivery_id: "DL003"
+        vehicle_type: "van"
+
+expected_output:
+  contains:
+    - "DL003"
+    - "dispatch"
+  values: {}

@@ -1,0 +1,41 @@
+id: industrial-005
+domain: industrial
+name: Check work order status
+description: >
+  User wants to check the status of work order WO001 and the associated
+  machine MC003.
+difficulty: easy
+user_prompt: >
+  What's the status of work order WO001? Also check the current status
+  of the machine it's associated with (MC003).
+
+gold_standard:
+  primitive:
+    - tool: get_work_order
+      arguments: { order_id: "WO001" }
+    - tool: get_machine_status
+      arguments: { machine_id: "MC003" }
+
+  composite_4:
+    - tool: get_floor_overview
+      arguments: {}
+    - tool: assess_machine_health
+      arguments: { machine_id: "MC003" }
+
+  composite_2:
+    - tool: industrial_monitor
+      arguments:
+        action: "machine_health"
+        machine_id: "MC003"
+
+  composite_1:
+    - tool: industrial
+      arguments:
+        action: "machine_health"
+        machine_id: "MC003"
+
+expected_output:
+  contains:
+    - "WO001"
+    - "MC003"
+  values: {}

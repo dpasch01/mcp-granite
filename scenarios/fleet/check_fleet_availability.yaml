@@ -1,0 +1,36 @@
+id: fleet-004
+domain: fleet
+name: Check fleet availability
+description: >
+  User wants a quick check on which vehicles and drivers are available
+  for assignment.
+difficulty: easy
+user_prompt: >
+  How many vehicles and drivers are currently available? Give me a quick
+  fleet availability summary.
+
+gold_standard:
+  primitive:
+    - tool: list_vehicles
+      arguments: { status_filter: "available" }
+    - tool: list_drivers
+      arguments: { status_filter: "available" }
+
+  composite_4:
+    - tool: get_fleet_overview
+      arguments: {}
+
+  composite_2:
+    - tool: fleet_query
+      arguments:
+        action: "fleet_overview"
+
+  composite_1:
+    - tool: fleet
+      arguments:
+        action: "fleet_overview"
+
+expected_output:
+  contains:
+    - "available"
+  values: {}

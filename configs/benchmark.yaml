@@ -1,6 +1,6 @@
-# Full dataset publication is pending. Update scenarios_dir once it is available.
+# All 81 bundled edge scenarios, all four interfaces, three repetitions.
 # Paths are relative to the working directory (run commands from the repository root).
-scenarios_dir: ../mcp-granite-dataset/scenarios
+scenarios_dir: scenarios
 models: ["granite4:3b"]
 domains:
   - smarthome

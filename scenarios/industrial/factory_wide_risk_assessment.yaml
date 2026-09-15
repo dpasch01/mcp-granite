@@ -1,0 +1,123 @@
+id: industrial-007
+domain: industrial
+name: Factory-wide risk assessment
+description: >
+  User wants a comprehensive risk assessment of the entire factory:
+  check all machines, review telemetry, check thresholds, review
+  maintenance history for machines with issues, and create work orders
+  for any at-risk machines.
+difficulty: hard
+user_prompt: >
+  Perform a comprehensive risk assessment of the entire factory. Check the
+  health of every machine (MC001 through MC004), identify any that are
+  exceeding thresholds or have active alerts, review maintenance history
+  for problematic machines, and create medium-priority work orders for
+  any machines that need attention but don't have orders yet.
+
+gold_standard:
+  primitive:
+    - tool: list_machines
+      arguments: {}
+    - tool: get_machine_status
+      arguments: { machine_id: "MC001" }
+    - tool: read_telemetry
+      arguments: { machine_id: "MC001" }
+    - tool: get_alert_thresholds
+      arguments: { machine_id: "MC001" }
+    - tool: get_machine_status
+      arguments: { machine_id: "MC002" }
+    - tool: read_telemetry
+      arguments: { machine_id: "MC002" }
+    - tool: get_machine_status
+      arguments: { machine_id: "MC003" }
+    - tool: read_telemetry
+      arguments: { machine_id: "MC003" }
+    - tool: get_machine_status
+      arguments: { machine_id: "MC004" }
+    - tool: read_telemetry
+      arguments: { machine_id: "MC004" }
+    - tool: get_maintenance_history
+      arguments: { machine_id: "MC004" }
+    - tool: create_work_order
+      arguments:
+        machine_id: "MC004"
+        priority: "medium"
+        description: "Risk assessment - elevated readings require preventive maintenance"
+
+  composite_4:
+    - tool: get_floor_overview
+      arguments: {}
+    - tool: assess_machine_health
+      arguments: { machine_id: "MC001" }
+    - tool: assess_machine_health
+      arguments: { machine_id: "MC002" }
+    - tool: assess_machine_health
+      arguments: { machine_id: "MC003" }
+    - tool: assess_machine_health
+      arguments: { machine_id: "MC004" }
+    - tool: schedule_maintenance
+      arguments:
+        machine_id: "MC004"
+        reason: "Risk assessment - elevated readings"
+        priority: "medium"
+
+  composite_2:
+    - tool: industrial_monitor
+      arguments:
+        action: "floor_overview"
+    - tool: industrial_monitor
+      arguments:
+        action: "machine_health"
+        machine_id: "MC001"
+    - tool: industrial_monitor
+      arguments:
+        action: "machine_health"
+        machine_id: "MC002"
+    - tool: industrial_monitor
+      arguments:
+        action: "machine_health"
+        machine_id: "MC003"
+    - tool: industrial_monitor
+      arguments:
+        action: "machine_health"
+        machine_id: "MC004"
+    - tool: industrial_action
+      arguments:
+        action: "schedule_maintenance"
+        machine_id: "MC004"
+        reason: "Risk assessment - elevated readings"
+        priority: "medium"
+
+  composite_1:
+    - tool: industrial
+      arguments:
+        action: "floor_overview"
+    - tool: industrial
+      arguments:
+        action: "machine_health"
+        machine_id: "MC001"
+    - tool: industrial
+      arguments:
+        action: "machine_health"
+        machine_id: "MC002"
+    - tool: industrial
+      arguments:
+        action: "machine_health"
+        machine_id: "MC003"
+    - tool: industrial
+      arguments:
+        action: "machine_health"
+        machine_id: "MC004"
+    - tool: industrial
+      arguments:
+        action: "schedule_maintenance"
+        machine_id: "MC004"
+        reason: "Risk assessment - elevated readings"
+        priority: "medium"
+
+expected_output:
+  contains:
+    - "MC001"
+    - "MC004"
+    - "risk"
+  values: {}

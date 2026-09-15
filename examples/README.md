@@ -61,4 +61,5 @@ hardware, and generation behavior can change outputs and timings.
   repetition `0`, all four granularities.
 - The four records were extracted from the original run; trace files were
   copied unchanged. They were not generated for this repository publication.
-- The complete dataset and all other experiment outputs remain separate.
+- The full scenario library is bundled under `scenarios/`; all other experiment
+  outputs remain separate.

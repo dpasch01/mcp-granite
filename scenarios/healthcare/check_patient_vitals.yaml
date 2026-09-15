@@ -1,0 +1,52 @@
+id: healthcare-001
+domain: healthcare
+name: Check patient vitals
+description: >
+  Check the vital signs for the patient in room 101 (Alice Johnson, PA001).
+  Retrieve the patient info and their latest vital sign readings.
+difficulty: easy
+user_prompt: >
+  Check the vital signs for the patient in room 101. Give me their patient
+  info and current vitals.
+
+gold_standard:
+  primitive:
+    - tool: list_patients
+      arguments: { room: "101" }
+    - tool: get_vitals
+      arguments: { patient_id: "PA001" }
+
+  composite_4:
+    - tool: monitor_patient
+      arguments:
+        patient_id: "PA001"
+        include_vitals: true
+        include_bed_sensor: false
+        include_devices: false
+
+  composite_2:
+    - tool: healthcare_query
+      arguments:
+        action: "get_patient"
+        patient_id: "PA001"
+    - tool: healthcare_query
+      arguments:
+        action: "get_vitals"
+        patient_id: "PA001"
+
+  composite_1:
+    - tool: healthcare
+      arguments:
+        action: "get_patient"
+        patient_id: "PA001"
+    - tool: healthcare
+      arguments:
+        action: "get_vitals"
+        patient_id: "PA001"
+
+expected_output:
+  contains:
+    - "Alice Johnson"
+    - "heart_rate"
+    - "78"
+  values: {}

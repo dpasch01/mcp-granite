@@ -1,0 +1,166 @@
+id: energy-009
+domain: energy
+name: Peak demand optimization
+description: >
+  User wants to optimize the microgrid for peak demand period. Must analyze
+  current generation vs load, maximize all renewable sources, manage battery
+  discharge strategy, schedule load shedding for non-critical zones during
+  peak hours, and create a recovery schedule.
+difficulty: hard
+user_prompt: >
+  We're approaching peak demand hours. Analyze the current grid balance,
+  maximize all renewable source output, set batteries to discharge for
+  peak shaving, reduce EV charging priority, schedule load shedding for
+  non-critical zones during peak hours (14:00-18:00), and schedule
+  battery recharging for overnight.
+
+gold_standard:
+  primitive:
+    - tool: list_power_sources
+      arguments: {}
+    - tool: list_load_zones
+      arguments: {}
+    - tool: get_battery_status
+      arguments: { battery_id: "BT001" }
+    - tool: get_battery_status
+      arguments: { battery_id: "BT002" }
+    - tool: set_battery
+      arguments: { battery_id: "BT001", status: "discharging", discharge_rate_kw: 75.0 }
+    - tool: set_battery
+      arguments: { battery_id: "BT002", status: "discharging", discharge_rate_kw: 50.0 }
+    - tool: set_load_zone
+      arguments: { zone_id: "LZ005", priority: 5 }
+    - tool: create_schedule_entry
+      arguments:
+        name: "Peak Load Shedding"
+        target_id: "LZ003"
+        action: "shed_load"
+        scheduled_time: "2025-06-01T14:00:00"
+        parameters: { duration_hours: 4 }
+    - tool: create_schedule_entry
+      arguments:
+        name: "Overnight Battery Recharge"
+        target_id: "BT001"
+        action: "charge"
+        scheduled_time: "2025-06-01T22:00:00"
+        parameters: { rate_kw: 50 }
+
+  composite_4:
+    - tool: get_grid_overview
+      arguments: {}
+    - tool: manage_power
+      arguments:
+        action: "set_battery"
+        battery_id: "BT001"
+        status: "discharging"
+        discharge_rate_kw: 75.0
+    - tool: manage_power
+      arguments:
+        action: "set_battery"
+        battery_id: "BT002"
+        status: "discharging"
+        discharge_rate_kw: 50.0
+    - tool: manage_load_schedule
+      arguments:
+        action: "set_load"
+        zone_id: "LZ005"
+        priority: 5
+    - tool: manage_load_schedule
+      arguments:
+        action: "create_schedule"
+        name: "Peak Load Shedding"
+        target_id: "LZ003"
+        operation: "shed_load"
+        scheduled_time: "2025-06-01T14:00:00"
+        parameters: { duration_hours: 4 }
+    - tool: manage_load_schedule
+      arguments:
+        action: "create_schedule"
+        name: "Overnight Battery Recharge"
+        target_id: "BT001"
+        operation: "charge"
+        scheduled_time: "2025-06-01T22:00:00"
+        parameters: { rate_kw: 50 }
+
+  composite_2:
+    - tool: energy_query
+      arguments:
+        action: "grid_overview"
+    - tool: energy_control
+      arguments:
+        action: "set_battery"
+        battery_id: "BT001"
+        status: "discharging"
+        discharge_rate_kw: 75.0
+    - tool: energy_control
+      arguments:
+        action: "set_battery"
+        battery_id: "BT002"
+        status: "discharging"
+        discharge_rate_kw: 50.0
+    - tool: energy_control
+      arguments:
+        action: "set_load"
+        zone_id: "LZ005"
+        priority: 5
+    - tool: energy_control
+      arguments:
+        action: "create_schedule"
+        name: "Peak Load Shedding"
+        target_id: "LZ003"
+        operation: "shed_load"
+        scheduled_time: "2025-06-01T14:00:00"
+        parameters: { duration_hours: 4 }
+    - tool: energy_control
+      arguments:
+        action: "create_schedule"
+        name: "Overnight Battery Recharge"
+        target_id: "BT001"
+        operation: "charge"
+        scheduled_time: "2025-06-01T22:00:00"
+        parameters: { rate_kw: 50 }
+
+  composite_1:
+    - tool: energy
+      arguments:
+        action: "grid_overview"
+    - tool: energy
+      arguments:
+        action: "set_battery"
+        battery_id: "BT001"
+        status: "discharging"
+        discharge_rate_kw: 75.0
+    - tool: energy
+      arguments:
+        action: "set_battery"
+        battery_id: "BT002"
+        status: "discharging"
+        discharge_rate_kw: 50.0
+    - tool: energy
+      arguments:
+        action: "set_load"
+        zone_id: "LZ005"
+        priority: 5
+    - tool: energy
+      arguments:
+        action: "create_schedule"
+        name: "Peak Load Shedding"
+        target_id: "LZ003"
+        operation: "shed_load"
+        scheduled_time: "2025-06-01T14:00:00"
+        parameters: { duration_hours: 4 }
+    - tool: energy
+      arguments:
+        action: "create_schedule"
+        name: "Overnight Battery Recharge"
+        target_id: "BT001"
+        operation: "charge"
+        scheduled_time: "2025-06-01T22:00:00"
+        parameters: { rate_kw: 50 }
+
+expected_output:
+  contains:
+    - "peak"
+    - "battery"
+    - "schedule"
+  values: {}
